@@ -1,0 +1,100 @@
+.react-calendar {
+  background: #4f7c82;
+  font-family: Poppins, sans-serif;
+  border: none;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+}
+
+.react-calendar__tile {
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.react-calendar__tile:hover {
+  color: rgb(30, 29, 29);
+  border-radius: 0.5rem;
+}
+
+/* Last Inject */
+.react-calendar .last-injection {
+  background-color: #3d5859;
+  color: white;
+  border-radius: 0.5rem;
+  margin-right: 1000000rem;
+  font-weight: bold;
+  padding: 2px;
+}
+
+.react-calendar .last-injection:hover {
+  background-color: #364d4e;
+
+  transition: all 0.3s ease;
+}
+
+/* Next Inject */
+
+.react-calendar .next-injection {
+  background-color: #937e90;
+  color: rgb(255, 243, 252);
+  font-weight: bold;
+  border-radius: 0.5rem;
+  margin-right: 1000000rem;
+  padding: 2px;
+}
+
+.react-calendar .next-injection:hover {
+  background-color: #af9dac;
+  transition: all 0.3s ease;
+}
+
+/* Today */
+.react-calendar__tile--now {
+  background-color: #273737;
+  font-weight: bold;
+  color: white;
+  border-radius: 0.5rem;
+}
+
+.react-calendar .react-calendar__tile--now:hover {
+  background-color: #374545;
+
+  transition: all 0.3s ease;
+}
+
+/* Weekend */
+.react-calendar__month-view__days__day--weekend {
+  color: #ffffff;
+  border-radius: 0.5rem;
+}
+
+.react-calendar__month-view__days__day--weekend:hover {
+  color: #e46d6d;
+}
+
+/* outside Day */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #494646;
+  opacity: 0.6;
+  border-radius: 0.5rem;
+}
+
+.react-calendar .react-calendar__tile--active {
+  color: white; /* Warna teks */
+  font-weight: bold; /* Teks tebal */
+  background-color: #3c4841 !important; /* Warna latar belakang */
+}
+
+.react-calendar__navigation button {
+  background-color: #4f7c82; /* Warna latar belakang tombol */
+  color: rgb(217, 219, 217); /* Warna teks tombol */
+  font-weight: bold; /* Teks tebal */
+  border-radius: 0.5rem; /* Membuat sudut membulat */
+  padding: 0.5rem; /* Memberikan ruang di dalam tombol */
+}
+.react-calendar__navigation button:hover {
+  color: #3d5859; /* Warna teks saat hover */
+  transition: all 0.3s ease; /* Transisi halus saat hover */
+}
+
