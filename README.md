@@ -80,6 +80,7 @@ Kabee adalah aplikasi pengingat suntik KB berbasis web yang mengirimkan notifika
 | Fetching Data    | Axios                        |
 | State Management | Zustand                      |
 | Routing          | React Router 7               |
+| Cloud Sorage          | Cloudinary              |
 
 ---
 
