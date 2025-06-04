@@ -2,7 +2,7 @@
 <p align="center">A web-based KB injection reminder with Telegram bot integration</p>
 
 
-<img src="./client/public/docs/1.png" alt="Kabee Web Screenshot" width="500"/>
+<img src="./client/public/docs/1.png" alt="Kabee Web Screenshot" width="800"/>
 
 
 <br/>
