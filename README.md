@@ -1,12 +1,7 @@
-
 <h1 align="center">💉 KABEE-INJECTION-REMINDER-APP</h1>
 <p align="center">A web-based KB injection reminder with Telegram bot integration</p>
 
 <br/>
-
-
-
-
 
 <p align="center">
   <img src="https://img.shields.io/badge/javascript-94.2%25-blue?style=for-the-badge&logo=javascript&logoColor=white">
@@ -14,8 +9,6 @@
 </p>
 
 <br/>
-
-
 
 <p align="center"><i>Built with the tools and technologies:</i></p>
 
@@ -39,8 +32,6 @@
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
   <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" />
 </p>
-
-
 
 Kabee adalah aplikasi pengingat suntik KB berbasis web yang mengirimkan notifikasi otomatis melalui Telegram, untuk membantu pengguna tidak melewatkan jadwal suntik mereka. Dikembangkan dengan stack MERN dan integrasi Bot Telegram yang cerdas.
 
@@ -73,18 +64,18 @@ Kabee adalah aplikasi pengingat suntik KB berbasis web yang mengirimkan notifika
 
 ## 🧰 Tech Stack
 
-| Layer      | Teknologi                            |
-|------------|--------------------------------------|
-| Frontend   | React, Tailwind CSS, Vite            |
-| Backend    | Node.js, Express.js                  |
-| Database   | MongoDB, Mongoose                    |
-| Scheduler  | cron-job.org                         |
-| Messaging  | Telegram Bot API                     |
-| Tools      | dotenv, axios, cors, nodemon         |
-| Auth       | JWT, Cookie                          |
-| Fetching  Data      | Axios                   |
-| State Management | Zustand                  |
-| Routing | React Router 7                 |
+| Layer            | Teknologi                    |
+| ---------------- | ---------------------------- |
+| Frontend         | React, Tailwind CSS, Vite    |
+| Backend          | Node.js, Express.js          |
+| Database         | MongoDB, Mongoose            |
+| Scheduler        | cron-job.org                 |
+| Messaging        | Telegram Bot API             |
+| Tools            | dotenv, axios, cors, nodemon |
+| Auth             | JWT, Cookie                  |
+| Fetching Data    | Axios                        |
+| State Management | Zustand                      |
+| Routing          | React Router 7               |
 
 ---
 
@@ -152,13 +143,46 @@ npm run dev
 
 ## 🔐 Environment Variables
 
-Buat file `.env` di direktori `server/`:
+Buat file `.env` di direktori `client` dan `server` :
 
 ```env
+//CLIENT ENV
+VITE_API_URL=http://localhost:5000
+```
+
+```env
+//SERVER ENV
+
+
+
+# App
+NODE_ENV=development
+
+# PORT
 PORT=5000
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/kabee
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-BASE_URL=https://api.telegram.org
+
+
+# DB
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/kabee_db
+
+
+# JWT
+JWT_SECRET=<RANDOM_STRING>
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=<YOUR_CLOUDINARY_NAME>
+CLOUDINARY_API_KEY=<YOUR_CLOUDINARY_API_KEY>
+CLOUDINARY_API_SECRET=<YOUR_CLOUDINARY_API_SECRET>
+CLOUDINARY_URL=<YOUR_CLOUDINARY_URL>
+
+# TELEGRAM
+TELEGRAM_TOKEN=<YOUR_TELEGRAM_TOKEN>
+
+# Client
+CLIENT_URL=http://localhost:5173
+
+# CRON SECRET
+CRON_SECRET=<RANDOM_STRING>
 ```
 
 ---
@@ -174,35 +198,21 @@ BASE_URL=https://api.telegram.org
 
 ## 🛠 API Endpoints
 
-> 🔒 Semua endpoint harus diakses menggunakan kode unik pengguna
-
-| Method | Endpoint            | Deskripsi                     |
-|--------|---------------------|-------------------------------|
-| POST   | `/api/register`     | Mendaftarkan pengguna baru    |
-| POST   | `/api/next-date`    | Input tanggal suntik berikutnya |
-| GET    | `/api/user/:code`   | Ambil data pengguna berdasarkan kode |
+> Semua endpoint terdapat di folder `server/src/routers`
 
 ---
 
 ## 🖼 Screenshots
 
-> *(Tambahkan screenshot antarmuka frontend dan interaksi bot di Telegram di sini)*
+### 💻 Web Interface
 
----
+<img src="./client/public/docs/1.png" alt="Kabee Web Screenshot" width="800"/>
+<img src="./client/public/docs/2.png" alt="Kabee Web Screenshot" width="800"/>
+<img src="./client/public/docs/3.png" alt="Kabee Web Screenshot" width="800"/>
+<img src="./client/public/docs/4.png" alt="Kabee Web Screenshot" width="800"/>
 
-## 🧪 Testing
+<br/>
+<br/>
+<br/>
 
-```bash
-# Jalankan pengujian (opsional jika sudah di-setup)
-npm test
-```
-
----
-
-## 📄 License
-
-MIT License. Silakan gunakan, ubah, dan kontribusi.
-
----
-
-> Made with 💙 by the Kabee Developer Team – empowering women with better health reminders.
+`Made with 💙 by kevin – empowering women with better health reminders.`
