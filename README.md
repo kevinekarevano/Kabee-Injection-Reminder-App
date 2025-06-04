@@ -1,6 +1,10 @@
 <h1 align="center">💉 KABEE-INJECTION-REMINDER-APP</h1>
 <p align="center">A web-based KB injection reminder with Telegram bot integration</p>
 
+
+<img src="./client/public/docs/1.png" alt="Kabee Web Screenshot" width="500"/>
+
+
 <br/>
 
 <p align="center">
@@ -210,6 +214,7 @@ CRON_SECRET=<RANDOM_STRING>
 <img src="./client/public/docs/2.png" alt="Kabee Web Screenshot" width="800"/>
 <img src="./client/public/docs/3.png" alt="Kabee Web Screenshot" width="800"/>
 <img src="./client/public/docs/4.png" alt="Kabee Web Screenshot" width="800"/>
+<img src="./client/public/docs/5.png" alt="Kabee Web Screenshot" width="800"/>
 
 <br/>
 <br/>
