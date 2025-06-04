@@ -9,7 +9,6 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/javascript-94.2%25-blue?style=for-the-badge&logo=javascript&logoColor=white">
-  <img src="https://img.shields.io/badge/languages-3-gray?style=for-the-badge">
 </p>
 
 <br/>
@@ -27,15 +26,15 @@
   <img src="https://img.shields.io/badge/Mongoose-880000?style=for-the-badge&logo=mongoose&logoColor=white" />
   <img src="https://img.shields.io/badge/.ENV-000000?style=for-the-badge&logo=dotenv&logoColor=green" />
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
-  <br/>
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
   <img src="https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white" />
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E" />
   <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge" />
   <img src="https://img.shields.io/badge/React%20Router-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white" />
-  <br/>
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
   <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" />
+<img src="https://img.shields.io/badge/Zustand-000000?style=for-the-badge" />
+
 </p>
 
 Kabee adalah aplikasi pengingat suntik KB berbasis web yang mengirimkan notifikasi otomatis melalui Telegram, untuk membantu pengguna tidak melewatkan jadwal suntik mereka. Dikembangkan dengan stack MERN dan integrasi Bot Telegram yang cerdas.
@@ -76,7 +75,6 @@ Kabee adalah aplikasi pengingat suntik KB berbasis web yang mengirimkan notifika
 | Database         | MongoDB, Mongoose            |
 | Scheduler        | cron-job.org                 |
 | Messaging        | Telegram Bot API             |
-| Tools            | dotenv, axios, cors, nodemon |
 | Auth             | JWT, Cookie                  |
 | Fetching Data    | Axios                        |
 | State Management | Zustand                      |
