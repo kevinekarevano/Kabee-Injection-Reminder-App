@@ -88,10 +88,25 @@ Kabee adalah aplikasi pengingat suntik KB berbasis web yang mengirimkan notifika
 
 ```bash
 kabee/
-├── client/                 # React frontend
-│   ├── src/
+│
+├── client/
+│   ├── node_modules/
 │   ├── public/
-│   └── vite.config.js
+│   └── src/
+│       ├── assets/         # Static assets (images, icons, etc.)
+│       ├── components/     # Reusable React components
+│       ├── helpers/        # Utility functions
+│       ├── lib/            # External libraries or service configs
+│       ├── pages/          # Page components (routing targets)
+│       ├── routes/         # Route definitions or configs
+│       ├── stores/         # State management (Zustand)
+│       ├── styles/         # Global or modular styles (Tailwind)
+│       ├── App.jsx         # Main app layout & router
+│       └── main.jsx        # React entry point (mounting React DOM)
+│
+├── .env                   # Environment variables
+└── index.html             # HTML template
+
 │
 ├── server/                 # Express backend
 │   ├── routes/            # API routes
