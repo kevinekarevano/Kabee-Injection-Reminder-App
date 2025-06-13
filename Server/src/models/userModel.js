@@ -11,6 +11,34 @@ const userSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+    nik: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    gender: {
+      type: String,
+      default: "Perempuan",
+    },
+    birthDate: {
+      type: Date,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    religion: {
+      type: String,
+      required: true,
+      enum: ["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"],
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     telegramChatID: {
       type: String,
       default: null,
@@ -43,10 +71,14 @@ const userSchema = mongoose.Schema(
       type: Date,
       default: null,
     },
+    initialInjectionDate: {
+      type: Date,
+      default: null,
+    },
     injectionType: {
       type: String,
       enum: ["1_month", "3_month"],
-      required: true,
+      default: null,
     },
     registrationCode: {
       type: String,

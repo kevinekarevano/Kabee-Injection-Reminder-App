@@ -52,7 +52,7 @@ const InjectionSchedule = () => {
       <div className="  font-poppins md:w-2/4 mt-5    md:mt-0  ">
         <div className="bg-[#93B1B5] px-4 py-2 rounded-md">
           <h1 className="font-semibold text-[#061416] mt-3 text-3xl">Next Injection</h1>
-          <p className="text-[#0B2E33] font-medium text-4xl mt-3">{formatDate(userData?.nextInjectionDate)}</p>
+          <p className="text-[#0B2E33] font-medium text-4xl mt-3">{formatDate(userData?.nextInjectionDate) || "-"}</p>
           <p className="text-[#343B3C] font-light mt-2">{formatRemainingDays(userData?.nextInjectionDate)} days remaining</p>
         </div>
 

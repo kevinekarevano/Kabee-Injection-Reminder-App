@@ -6,6 +6,8 @@ import CountUp from "react-countup";
 
 const HomePage = () => {
   const users = useAppStore((state) => state.users);
+  const pendingInjectionUsers = useAppStore((state) => state.pendingInjectionUsers);
+
   const [reminderStats, setReminderStats] = useState({
     autoToday: 0,
     adminToday: 0,
@@ -73,6 +75,15 @@ const HomePage = () => {
               <CountUp end={reminderStats.totalMonth} duration={5} />
             </h1>
             <h2 className="text-md sm:text-sm lg:text- font-light">Total reminder bulan ini</h2>
+          </div>
+        </div>
+        <div className="bg-zinc-700 w-full text-white rounded-sm flex justify-start sm:flex-col lg:flex-row sm:items-start items-center gap-3 p-3">
+          <img src="/suntikan.png" alt="women" className="w-11 lg:w-15" />
+          <div>
+            <h1 className="text-2xl font-semibold">
+              <CountUp end={pendingInjectionUsers.length} duration={5} />
+            </h1>
+            <h2 className="text-md sm:text-sm lg:text- font-light">Pending injection users</h2>
           </div>
         </div>
       </div>

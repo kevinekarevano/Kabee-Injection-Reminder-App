@@ -50,13 +50,16 @@ export const getUserData = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  let { username, password, injectionType } = req.body;
+  let { username, nik, birthDate, address, religion, phoneNumber, password } = req.body;
   const avatarFile = req.file;
 
   username = username.trim();
   password = password.trim();
+  phoneNumber = phoneNumber.trim();
+  address = address.trim();
+  nik = nik.trim();
 
-  if (!username || !password || !injectionType || !avatarFile) {
+  if (!username || !password || !nik || !birthDate || !address || !religion || !phoneNumber || !avatarFile) {
     return res.status(400).json({ success: false, message: "Please provide all required fields" });
   }
 
@@ -84,39 +87,45 @@ export const createUser = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const lastInjectionDate = dayjs(); // Tetap sebagai objek dayjs
-    let nextInjectionDate;
+    // const lastInjectionDate = dayjs(); // Tetap sebagai objek dayjs
+    // let nextInjectionDate;
 
-    if (injectionType === "1_month") {
-      nextInjectionDate = lastInjectionDate.add(1, "month"); // Tambahkan 1 bulan
-    } else if (injectionType === "3_month") {
-      nextInjectionDate = lastInjectionDate.add(3, "month"); // Tambahkan 3 bulan
-    }
+    // if (injectionType === "1_month") {
+    //   nextInjectionDate = lastInjectionDate.add(1, "month"); // Tambahkan 1 bulan
+    // } else if (injectionType === "3_month") {
+    //   nextInjectionDate = lastInjectionDate.add(3, "month"); // Tambahkan 3 bulan
+    // }
 
-    const lastInjectionDateAsDate = lastInjectionDate.toDate();
-    const nextInjectionDateAsDate = nextInjectionDate.toDate();
+    // const lastInjectionDateAsDate = lastInjectionDate.toDate();
+    // const nextInjectionDateAsDate = nextInjectionDate.toDate();
 
     const newUser = await userModel.create({
       username,
+      nik,
+      birthDate: new Date(birthDate), // Convert to Date object
+      address,
+      religion,
+      phoneNumber,
       password: hashedPassword,
-      injectionType,
-      nextInjectionDate: nextInjectionDateAsDate,
-      lastInjectionDate: lastInjectionDateAsDate,
+      // injectionType
+      // nextInjectionDate: nextInjectionDateAsDate,
+      // lastInjectionDate: lastInjectionDateAsDate,
       avatar: {
         public_id: uploadResponse.public_id,
         url: uploadResponse.secure_url,
       },
     });
 
-    await injectionHistoryModel.create({
-      user: newUser._id,
-      injectionDate: lastInjectionDate,
-      injectionType,
-    });
+    // await injectionHistoryModel.create({
+    //   user: newUser._id,
+    //   injectionDate: lastInjectionDate,
+    //   injectionType,
+    // });
 
     res.status(201).json({ success: true, message: "User created successfully", data: newUser });
   } catch (error) {
     res.json({ success: false, message: "Error creating user", error: error.message });
+    console.error("Error creating user:", error);
   }
 };
 
@@ -194,7 +203,7 @@ export const deleteUser = async (req, res) => {
 };
 
 export const confirmInjection = async (req, res) => {
-  const { id } = req.user;
+  const id = req.params.id || req.user.id;
   const today = dayjs().startOf("day").toDate(); // Ambil tanggal hari ini tanpa waktu
 
   try {
@@ -284,17 +293,68 @@ export const getInjectionHistory = async (req, res) => {
   }
 };
 
+export const getInjectionHistoryByMonth = async (req, res) => {
+  try {
+    const { month, year } = req.query;
+
+    let filter = {};
+
+    if (year && month) {
+      // Filter by specific month and year
+      const start = dayjs(`${year}-${month}-01`).startOf("month").toDate();
+      const end = dayjs(start).endOf("month").toDate();
+      filter.injectionDate = { $gte: start, $lte: end };
+    } else if (year && !month) {
+      // Filter by whole year
+      const start = dayjs(`${year}-01-01`).startOf("year").toDate();
+      const end = dayjs(start).endOf("year").toDate();
+      filter.injectionDate = { $gte: start, $lte: end };
+    } else if (!year && month) {
+      // Invalid: month without year → tolong frontend jangan kirim begini
+      return res.status(400).json({
+        success: false,
+        message: "Month filter requires year to be specified.",
+      });
+    }
+
+    const histories = await injectionHistoryModel.find(filter).populate("user", ["username", "injectionType", "avatar"]).sort({ injectionDate: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Injection history fetched successfully",
+      data: histories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching injection history",
+      error: error.message,
+    });
+  }
+};
+
 export const updatedUser = async (req, res) => {
   const { id } = req.params;
-  const { username, password, injectionType } = req.body;
-  const avatarFile = req.file; // Ambil file avatar dari request
+  const { username, password, injectionType, nik, birthDate, address, phoneNumber, religion, initialInjectionDate } = req.body;
+  const avatarFile = req.file;
 
   try {
     if (!id) {
       return res.status(400).json({ success: false, message: "Please provide the User Id" });
     }
 
-    if (!username.trim() && !password.trim() && !injectionType && !avatarFile) {
+    if (
+      (!username || !username.trim()) &&
+      (!password || !password.trim()) &&
+      !injectionType &&
+      !avatarFile &&
+      (!nik || !nik.trim()) &&
+      !birthDate &&
+      (!address || !address.trim()) &&
+      (!phoneNumber || !phoneNumber.trim()) &&
+      !religion &&
+      !initialInjectionDate
+    ) {
       return res.status(400).json({ success: false, message: "Please provide at least one field to update" });
     }
 
@@ -304,13 +364,11 @@ export const updatedUser = async (req, res) => {
     }
 
     // Check if the username already exists
-    const existingUser = await userModel.findOne({ username });
-    if (existingUser && existingUser._id.toString() !== id) {
-      return res.status(400).json({ success: false, message: "Username already exists" });
-    }
-
-    // update username
     if (username) {
+      const existingUser = await userModel.findOne({ username });
+      if (existingUser && existingUser._id.toString() !== id) {
+        return res.status(400).json({ success: false, message: "Username already exists" });
+      }
       user.username = username.trim();
     }
 
@@ -320,14 +378,39 @@ export const updatedUser = async (req, res) => {
       user.password = hashedPassword;
     }
 
-    // update injectionType
+    // update injectionType & initialInjectionDate
     if (injectionType) {
       user.injectionType = injectionType;
+    }
+    if (initialInjectionDate) {
+      user.initialInjectionDate = new Date(initialInjectionDate);
+      user.nextInjectionDate = new Date(initialInjectionDate); // Next = initial date
+      user.lastInjectionDate = null; // Belum pernah suntik
+    }
 
-      if (user.lastInjectionDate) {
-        const last = dayjs(user.lastInjectionDate);
-        user.nextInjectionDate = injectionType === "1_month" ? last.add(1, "month").toDate() : last.add(3, "month").toDate();
-      }
+    // update nik
+    if (nik) {
+      user.nik = nik.trim();
+    }
+
+    // update birthDate
+    if (birthDate) {
+      user.birthDate = new Date(birthDate);
+    }
+
+    // update address
+    if (address) {
+      user.address = address.trim();
+    }
+
+    // update phoneNumber
+    if (phoneNumber) {
+      user.phoneNumber = phoneNumber.trim();
+    }
+
+    // update religion
+    if (religion) {
+      user.religion = religion;
     }
 
     // update avatar
@@ -361,12 +444,18 @@ export const updatedUser = async (req, res) => {
       data: {
         id: updatedUser._id,
         username: updatedUser.username,
+        nik: updatedUser.nik,
+        birthDate: updatedUser.birthDate,
+        address: updatedUser.address,
+        phoneNumber: updatedUser.phoneNumber,
+        religion: updatedUser.religion,
         telegramChatID: updatedUser.telegramChatID,
         registrationCode: updatedUser.registrationCode,
         avatar: updatedUser.avatar.url,
         injectionType: updatedUser.injectionType,
         nextInjectionDate: updatedUser.nextInjectionDate,
         lastInjectionDate: updatedUser.lastInjectionDate,
+        initialInjectionDate: updatedUser.lastInjectionDate,
         role: updatedUser.role,
       },
     });
@@ -383,7 +472,7 @@ export const sendMessage = async (req, res) => {
     const user = await userModel.findById(id);
 
     if (!user || !user.telegramChatID) {
-      return res.status(404).json({ success: false, message: "User not found or Telegram is not connected." });
+      return res.status(404).json({ success: false, message: " User is not synced to telegram " });
     }
 
     await bot.sendMessage(user.telegramChatID, message);
@@ -397,5 +486,44 @@ export const sendMessage = async (req, res) => {
     res.status(200).json({ success: true, message: "Message sent successfully." });
   } catch (error) {
     res.status(500).json({ success: false, message: "Failed to send message.", error: error.message });
+  }
+};
+
+export const getUsersWithPendingInjection = async (req, res) => {
+  try {
+    const today = dayjs().startOf("day");
+
+    // Ambil semua user yang role user
+    const users = await userModel.find({ role: "user" });
+
+    // Update status isConfirmed jika sudah jatuh tempo
+    for (const user of users) {
+      if (user.nextInjectionDate && user.isConfirmed && dayjs(user.nextInjectionDate).startOf("day").isSameOrBefore(today)) {
+        user.isConfirmed = false;
+        await user.save();
+      }
+    }
+
+    // Ambil ulang user yang pending
+    const startOfToday = dayjs().startOf("day").toDate();
+    const endOfToday = dayjs().endOf("day").toDate();
+
+    const pendingUsers = await userModel.find({
+      role: "user",
+      isConfirmed: false,
+      nextInjectionDate: { $gte: startOfToday, $lte: endOfToday },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Users with pending injection confirmation retrieved successfully",
+      data: pendingUsers,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving users with pending injection confirmation",
+      error: error.message,
+    });
   }
 };

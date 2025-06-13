@@ -10,7 +10,7 @@ export const login = async (req, res) => {
   }
 
   try {
-    const findUser = await userModel.findOne({ username });
+    const findUser = await userModel.findOne({ username: { $regex: `^${username}$`, $options: "i" } }); // case-insensitive search
     if (!findUser) {
       return res.status(400).json({ success: false, message: "User not found" });
     }

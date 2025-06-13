@@ -10,6 +10,7 @@ const useAppStore = create((set, get) => ({
   userData: null,
   injectionHistory: [],
   users: [],
+  pendingInjectionUsers: [],
 
   setIsLoggedIn: (val) => set({ isLoggedIn: val }),
   setUserData: (data) => set({ userData: data }),
@@ -23,6 +24,7 @@ const useAppStore = create((set, get) => ({
         set({ isLoggedIn: true });
         get().getInjectionHistory();
         get().getAllUser();
+        get().getPendingInjectionUsers();
       } else {
         set({ isLoggedIn: false, userData: null });
       }
@@ -90,16 +92,34 @@ const useAppStore = create((set, get) => ({
     });
   },
 
-  injectionConfirmation: async () => {
+  injectionConfirmation: async (id) => {
     try {
-      const { data } = await axios.patch(`${import.meta.env.VITE_API_URL}/api/user/confirmation`, {}, { withCredentials: true });
+      const { data } = await axios.patch(`${import.meta.env.VITE_API_URL}/api/user/confirmation/${id ? id : ""}`, {}, { withCredentials: true });
       if (data.success) {
         toast.success(data.message);
         get().getUserData();
         get().getInjectionHistory();
+        get().getPendingInjectionUsers();
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
       console.log(error);
+    }
+  },
+
+  getPendingInjectionUsers: async () => {
+    const user = get().userData;
+    if (!user || user.role !== "admin") {
+      return; // Only admins can fetch pending injection users
+    }
+    try {
+      const { data } = await axios.get(`${API_URL}/api/user/pending-injection`, { withCredentials: true });
+      if (data.success) {
+        set({ pendingInjectionUsers: data.data });
+      }
+    } catch (error) {
+      console.error("Error fetching pending injection users", error);
     }
   },
 }));
