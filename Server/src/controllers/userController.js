@@ -511,7 +511,7 @@ export const getUsersWithPendingInjection = async (req, res) => {
     const pendingUsers = await userModel.find({
       role: "user",
       isConfirmed: false,
-      nextInjectionDate: { $gte: startOfToday, $lte: endOfToday },
+      nextInjectionDate: { $lte: endOfToday },
     });
 
     res.status(200).json({
