@@ -6,6 +6,7 @@ import cloudinary from "../config/cloudinary.js";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore.js";
 import bot from "../services/telegramBot.js";
+import chatHistoryModel from "../models/chatHistoryModel.js";
 
 dayjs.extend(isSameOrBefore);
 
@@ -50,7 +51,7 @@ export const getUserData = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  let { username, nik, birthDate, address, religion, phoneNumber, password } = req.body;
+  let { username, nik, weight, height, numberOfChildren, birthDate, address, religion, phoneNumber, password } = req.body;
   const avatarFile = req.file;
 
   username = username.trim();
@@ -59,7 +60,7 @@ export const createUser = async (req, res) => {
   address = address.trim();
   nik = nik.trim();
 
-  if (!username || !password || !nik || !birthDate || !address || !religion || !phoneNumber || !avatarFile) {
+  if (!username || !password || !nik || !birthDate || !address || !religion || !phoneNumber || !avatarFile || !weight || !height || !numberOfChildren) {
     return res.status(400).json({ success: false, message: "Please provide all required fields" });
   }
 
@@ -102,6 +103,9 @@ export const createUser = async (req, res) => {
     const newUser = await userModel.create({
       username,
       nik,
+      weight,
+      height,
+      numberOfChildren,
       birthDate: new Date(birthDate), // Convert to Date object
       address,
       religion,
@@ -110,6 +114,7 @@ export const createUser = async (req, res) => {
       // injectionType
       // nextInjectionDate: nextInjectionDateAsDate,
       // lastInjectionDate: lastInjectionDateAsDate,
+
       avatar: {
         public_id: uploadResponse.public_id,
         url: uploadResponse.secure_url,
@@ -335,7 +340,7 @@ export const getInjectionHistoryByMonth = async (req, res) => {
 
 export const updatedUser = async (req, res) => {
   const { id } = req.params;
-  const { username, password, injectionType, nik, birthDate, address, phoneNumber, religion, initialInjectionDate } = req.body;
+  const { username, password, injectionType, nik, weight, height, numberOfChildren, birthDate, address, phoneNumber, religion, initialInjectionDate } = req.body;
   const avatarFile = req.file;
 
   try {
@@ -348,6 +353,9 @@ export const updatedUser = async (req, res) => {
       (!password || !password.trim()) &&
       !injectionType &&
       !avatarFile &&
+      !weight &&
+      !height &&
+      !numberOfChildren &&
       (!nik || !nik.trim()) &&
       !birthDate &&
       (!address || !address.trim()) &&
@@ -391,6 +399,21 @@ export const updatedUser = async (req, res) => {
     // update nik
     if (nik) {
       user.nik = nik.trim();
+    }
+
+    // update weight
+    if (weight) {
+      user.weight = parseFloat(weight);
+    }
+
+    // update height
+    if (height) {
+      user.height = parseFloat(height);
+    }
+
+    // update numberOfChildren
+    if (numberOfChildren) {
+      user.numberOfChildren = parseInt(numberOfChildren, 10);
     }
 
     // update birthDate
@@ -445,6 +468,9 @@ export const updatedUser = async (req, res) => {
         id: updatedUser._id,
         username: updatedUser.username,
         nik: updatedUser.nik,
+        weight: updatedUser.weight,
+        height: updatedUser.height,
+        numberOfChildren: updatedUser.numberOfChildren,
         birthDate: updatedUser.birthDate,
         address: updatedUser.address,
         phoneNumber: updatedUser.phoneNumber,
@@ -477,15 +503,40 @@ export const sendMessage = async (req, res) => {
 
     await bot.sendMessage(user.telegramChatID, message);
 
+    // Simpan ke log pengingat
     reminderLogModel.create({
       userId: user._id,
       method: "admin",
       message,
     });
 
+    // Simpan ke chat history
+    await chatHistoryModel.create({
+      userId: user._id,
+      message,
+    });
+
     res.status(200).json({ success: true, message: "Message sent successfully." });
   } catch (error) {
     res.status(500).json({ success: false, message: "Failed to send message.", error: error.message });
+  }
+};
+
+export const getChatHistory = async (req, res) => {
+  try {
+    const chatHistory = await chatHistoryModel.find().populate("userId", "username").sort({ createdAt: -1 });
+
+    if (!chatHistory || chatHistory.length === 0) {
+      return res.status(200).json({ success: true, message: "No chat history found", data: [] });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Chat history retrieved successfully",
+      data: chatHistory,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error retrieving chat history", error: error.message });
   }
 };
 

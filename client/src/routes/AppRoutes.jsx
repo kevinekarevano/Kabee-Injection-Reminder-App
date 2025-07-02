@@ -15,6 +15,8 @@ import RoleBasedRoute from "@/components/routes/RoleBasedRoute";
 import DataEntryPage from "@/pages/Dashboard/DataEntryPage";
 import PendingInjectionPage from "@/pages/Dashboard/PendingInjectionPage";
 import DataReportPage from "@/pages/Dashboard/DataReportPage";
+import ChatListPage from "@/pages/Dashboard/ChatListPage";
+import ChatHistoryPage from "@/pages/Dashboard/ChatHistoryPage";
 
 const AppRoutes = () => {
   return (
@@ -51,6 +53,8 @@ const AppRoutes = () => {
           <Route path="user/:id" element={<EditUserPage />} />
           <Route path="user/history/:id/:username" element={<UserHistoryPage />} />
           <Route path="user/chat/:id" element={<ChatPage />} />
+          <Route path="chat" element={<ChatListPage />} />
+          <Route path="chat/history" element={<ChatHistoryPage />} />
           <Route path="users/data-entry" element={<DataEntryPage />} />
           <Route path="users/pending-injection" element={<PendingInjectionPage />} />
           <Route path="users/data-report" element={<DataReportPage />} />

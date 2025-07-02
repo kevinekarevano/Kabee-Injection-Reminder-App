@@ -1,6 +1,6 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
 import { NavLink, useNavigate } from "react-router";
-import { CircleUserRound, Home, UserPlus, Grid2x2Plus, Syringe, Printer } from "lucide-react";
+import { CircleUserRound, Home, UserPlus, Grid2x2Plus, Syringe, Printer, MessageCircleMore, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import useAppStore from "@/stores/useAppStore";
@@ -36,6 +36,21 @@ const sidebarMenus = [
         label: "Pending Injection",
         icon: <Syringe size={17} />,
         to: "/dashboard/users/pending-injection",
+      },
+    ],
+  },
+  {
+    label: "Chat Management",
+    subMenu: [
+      {
+        label: "Chat",
+        icon: <MessageCircleMore size={17} />,
+        to: "/dashboard/chat",
+      },
+      {
+        label: "Chat History",
+        icon: <History size={17} />,
+        to: "/dashboard/chat/history",
       },
     ],
   },

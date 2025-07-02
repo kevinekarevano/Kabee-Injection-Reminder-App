@@ -18,6 +18,9 @@ const EditUserPage = () => {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [username, setUsername] = useState("");
   const [nik, setNik] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [numberOfChildren, setNumberOfChildren] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [address, setAddress] = useState("");
   const [religion, setReligion] = useState("");
@@ -59,6 +62,7 @@ const EditUserPage = () => {
   const getUserById = async () => {
     try {
       setIsLoading(true);
+
       const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/id/${id}`, {
         withCredentials: true,
       });
@@ -68,6 +72,9 @@ const EditUserPage = () => {
       if (data.success) {
         setUsername(user.username || "");
         setNik(user.nik || "");
+        setWeight(user.weight ? user.weight.toString() : "");
+        setHeight(user.height ? user.height.toString() : "");
+        setNumberOfChildren(user.numberOfChildren ? user.numberOfChildren.toString() : "");
         setBirthDate(formatDateForInput(user.birthDate));
         setAddress(user.address || "");
         setReligion(user.religion || "");
@@ -98,7 +105,21 @@ const EditUserPage = () => {
     setIsLoading(true);
 
     // Validasi minimal satu field harus diisi
-    if (!username.trim() && !nik.trim() && !birthDate && !address.trim() && !religion && !phoneNumber.trim() && !password.trim() && !injectionType && !avatarFile && !initialInjectionDate) {
+    if (
+      !username.trim() &&
+      !nik.trim() &&
+      !weight.trim() &&
+      !height.trim() &&
+      !numberOfChildren.trim() &&
+      !birthDate &&
+      !address.trim() &&
+      !religion &&
+      !phoneNumber.trim() &&
+      !password.trim() &&
+      !injectionType &&
+      !avatarFile &&
+      !initialInjectionDate
+    ) {
       toast.warning("Please provide at least one field to update");
       setIsLoading(false);
       return;
@@ -109,6 +130,9 @@ const EditUserPage = () => {
     // Hanya append field yang ada nilainya
     if (username.trim()) formData.append("username", username);
     if (nik.trim()) formData.append("nik", nik);
+    if (weight.trim()) formData.append("weight", weight);
+    if (height.trim()) formData.append("height", height);
+    if (numberOfChildren.trim()) formData.append("numberOfChildren", numberOfChildren);
     if (birthDate) formData.append("birthDate", birthDate);
     if (address.trim()) formData.append("address", address);
     if (religion) formData.append("religion", religion);
@@ -155,7 +179,7 @@ const EditUserPage = () => {
     <div className="w-full">
       <BreadcrumbCustom pageName={"Detail user"} />
       <h1 className="text-white font-bold text-xl">Edit User - {originalName}</h1>
-      <form onSubmit={handleSubmit} encType="multipart/form-data" className="mt-3 bg-zinc-700 p-5 rounded-sm">
+      <div onSubmit={handleSubmit} className="mt-3 bg-zinc-700 p-5 rounded-sm">
         {/* Row 1: Username, NIK, Birth Date */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
           <div>
@@ -182,12 +206,45 @@ const EditUserPage = () => {
               className="bg-zinc-800 border-zinc-900 text-zinc-300 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:filter"
               type="date"
               id="birthDate"
-              max={new Date().toISOString().split("T")[0]} // Membatasi maksimal hari ini
+              max={new Date().toISOString().split("T")[0]}
             />
           </div>
         </div>
 
-        {/* Row 2: Address, Religion, Phone Number */}
+        {/* Row 2: Weight, Height, Number of Children */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+          <div>
+            <Label className="font-medium mb-2 text-white" htmlFor="weight">
+              Weight (kg)
+            </Label>
+            <Input value={weight} onChange={(e) => setWeight(e.target.value)} className="bg-zinc-800 border-zinc-900 text-zinc-300" type="number" id="weight" placeholder="Enter weight..." min="1" step="0.1" />
+          </div>
+
+          <div>
+            <Label className="font-medium mb-2 text-white" htmlFor="height">
+              Height (cm)
+            </Label>
+            <Input value={height} onChange={(e) => setHeight(e.target.value)} className="bg-zinc-800 border-zinc-900 text-zinc-300" type="number" id="height" placeholder="Enter height..." min="1" step="0.1" />
+          </div>
+
+          <div>
+            <Label className="font-medium mb-2 text-white" htmlFor="numberOfChildren">
+              Number of Children
+            </Label>
+            <Input
+              value={numberOfChildren}
+              onChange={(e) => setNumberOfChildren(e.target.value)}
+              className="bg-zinc-800 border-zinc-900 text-zinc-300"
+              type="number"
+              id="numberOfChildren"
+              placeholder="Enter number of children..."
+              min="0"
+              step="1"
+            />
+          </div>
+        </div>
+
+        {/* Row 3: Address, Religion, Phone Number */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
           <div>
             <Label className="font-medium mb-2 text-white" htmlFor="address">
@@ -221,7 +278,7 @@ const EditUserPage = () => {
           </div>
         </div>
 
-        {/* Row 3: Password, Injection Type */}
+        {/* Row 4: Password, Initial Injection Date, Injection Type */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 ">
           <div className="relative">
             <Label className="font-medium mb-2 text-white" htmlFor="password">
@@ -244,7 +301,7 @@ const EditUserPage = () => {
                 className="bg-zinc-800 border-zinc-900 text-zinc-300 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:filter"
                 type="date"
                 id="initialInjectionDate"
-                min={new Date().toISOString().split("T")[0]} // <-- ini membatasi tanggal minimal hari ini
+                min={new Date().toISOString().split("T")[0]}
               />
               {!initialInjectionDate && <p className="text-xs text-red-400 mt-2 text-right">Please select an Initial Injection Date.</p>}
             </div>
@@ -281,7 +338,7 @@ const EditUserPage = () => {
           </div>
 
           <div className="flex mt-10 gap-2">
-            <Button disabled={isLoading} type="submit" className={`${isLoading ? "bg-sky-900 hover:bg-sky-900" : "bg-sky-300 hover:bg-sky-400"} w-1/2 text-sky-900 hover:text-sky-950 duration-500 font-bold cursor-pointer`}>
+            <Button disabled={isLoading} onClick={handleSubmit} className={`${isLoading ? "bg-sky-900 hover:bg-sky-900" : "bg-sky-300 hover:bg-sky-400"} w-1/2 text-sky-900 hover:text-sky-950 duration-500 font-bold cursor-pointer`}>
               {isLoading ? (
                 <Loader />
               ) : (
@@ -298,7 +355,7 @@ const EditUserPage = () => {
             </Link>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

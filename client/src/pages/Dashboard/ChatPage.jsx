@@ -94,7 +94,7 @@ Tim Admin Kabee`)
               Gunakan Template Resmi
             </Button>
 
-            <Link className="" to={"/dashboard/users"}>
+            <Link className="" to={"/dashboard/chat"}>
               <Button disabled={isLoading} className={"bg-red-300  text-red-900 w-full  hover:bg-red-400 hover:text-red-950 duration-500 font-bold cursor-pointer"}>
                 Cancel
               </Button>

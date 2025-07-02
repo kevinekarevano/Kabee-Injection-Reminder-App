@@ -16,6 +16,9 @@ const CreateUserPage = () => {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [username, setUsername] = useState("");
   const [nik, setNik] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [numberOfChildren, setNumberOfChildren] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [address, setAddress] = useState("");
   const [religion, setReligion] = useState("");
@@ -47,6 +50,9 @@ const CreateUserPage = () => {
   const resetForm = () => {
     setUsername("");
     setNik("");
+    setWeight("");
+    setHeight("");
+    setNumberOfChildren("");
     setBirthDate("");
     setAddress("");
     setReligion("");
@@ -63,7 +69,7 @@ const CreateUserPage = () => {
     }
     setIsLoading(true);
 
-    if (!username.trim() || !nik.trim() || !birthDate || !address.trim() || !religion || !phoneNumber.trim() || !password.trim() || !avatarFile) {
+    if (!username.trim() || !nik.trim() || !weight.trim() || !height.trim() || !numberOfChildren.trim() || !birthDate || !address.trim() || !religion || !phoneNumber.trim() || !password.trim() || !avatarFile) {
       toast.warning("Please provide all required fields");
       setIsLoading(false);
       return;
@@ -72,6 +78,9 @@ const CreateUserPage = () => {
     const formData = new FormData();
     formData.append("username", username);
     formData.append("nik", nik);
+    formData.append("weight", weight);
+    formData.append("height", height);
+    formData.append("numberOfChildren", numberOfChildren);
     formData.append("birthDate", birthDate);
     formData.append("address", address);
     formData.append("religion", religion);
@@ -110,7 +119,7 @@ const CreateUserPage = () => {
   return (
     <div className="w-full">
       <h1 className="text-white font-bold text-xl">Create User</h1>
-      <form onSubmit={handleSubmit} encType="multipart/form-data" className="mt-3 bg-zinc-700 p-5 rounded-sm">
+      <form onSubmit={handleSubmit} className="mt-3 bg-zinc-700 p-5 rounded-sm">
         {/* Row 1: Username, NIK, Birth Date */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
           <div>
@@ -138,12 +147,46 @@ const CreateUserPage = () => {
               className="bg-zinc-800 border-zinc-900 text-zinc-300 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:filter"
               type="date"
               id="birthDate"
-              max={new Date().toISOString().split("T")[0]} // Membatasi maksimal hari ini
+              max={new Date().toISOString().split("T")[0]}
             />
           </div>
         </div>
 
-        {/* Row 2: Address, Religion, Phone Number */}
+        {/* Row 2: Weight, Height, Number of Children */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+          <div>
+            <Label className="font-medium mb-2 text-white" htmlFor="weight">
+              Weight (kg) <span className="text-red-800">*</span>
+            </Label>
+            <Input value={weight} onChange={(e) => setWeight(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="number" id="weight" placeholder="Enter weight..." min="1" step="0.1" />
+          </div>
+
+          <div>
+            <Label className="font-medium mb-2 text-white" htmlFor="height">
+              Height (cm) <span className="text-red-800">*</span>
+            </Label>
+            <Input value={height} onChange={(e) => setHeight(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="number" id="height" placeholder="Enter height..." min="1" step="0.1" />
+          </div>
+
+          <div>
+            <Label className="font-medium mb-2 text-white" htmlFor="numberOfChildren">
+              Number of Children <span className="text-red-800">*</span>
+            </Label>
+            <Input
+              value={numberOfChildren}
+              onChange={(e) => setNumberOfChildren(e.target.value)}
+              required
+              className="bg-zinc-800 border-zinc-900 text-zinc-300"
+              type="number"
+              id="numberOfChildren"
+              placeholder="Enter number of children..."
+              min="0"
+              step="1"
+            />
+          </div>
+        </div>
+
+        {/* Row 3: Address, Religion, Phone Number */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
           <div>
             <Label className="font-medium mb-2 text-white" htmlFor="address">
@@ -177,7 +220,10 @@ const CreateUserPage = () => {
             </Label>
             <Input value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="tel" id="phoneNumber" placeholder="Enter phone number..." />
           </div>
+        </div>
 
+        {/* Row 4: Password */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
           <div className="relative">
             <Label className="font-medium mb-2 text-white" htmlFor="password">
               Password <span className="text-red-800">*</span>

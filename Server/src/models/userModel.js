@@ -20,6 +20,18 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "Perempuan",
     },
+    weight: {
+      type: Number,
+      required: true,
+    },
+    height: {
+      type: Number,
+      required: true,
+    },
+    numberOfChildren: {
+      type: Number,
+      required: true,
+    },
     birthDate: {
       type: Date,
       required: true,

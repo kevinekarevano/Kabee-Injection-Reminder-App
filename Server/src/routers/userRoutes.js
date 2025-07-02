@@ -1,5 +1,18 @@
 import express from "express";
-import { confirmInjection, createUser, deleteUser, getAllUsers, getInjectionHistory, getInjectionHistoryByMonth, getUserById, getUserData, getUsersWithPendingInjection, sendMessage, updatedUser } from "../controllers/userController.js";
+import {
+  confirmInjection,
+  createUser,
+  deleteUser,
+  getAllUsers,
+  getChatHistory,
+  getInjectionHistory,
+  getInjectionHistoryByMonth,
+  getUserById,
+  getUserData,
+  getUsersWithPendingInjection,
+  sendMessage,
+  updatedUser,
+} from "../controllers/userController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 const router = express.Router();
 import multer from "multer";
@@ -13,6 +26,7 @@ router.get("/injection-history/:id", authMiddleware, getInjectionHistory);
 router.get("/injection-report", authMiddleware, adminMiddleware, getInjectionHistoryByMonth);
 router.get("/id/:id", authMiddleware, adminMiddleware, getUserById);
 router.get("/pending-injection", authMiddleware, adminMiddleware, getUsersWithPendingInjection);
+router.get("/chat-history", authMiddleware, adminMiddleware, getChatHistory);
 router.post("/create", authMiddleware, adminMiddleware, upload.single("avatar"), createUser);
 router.post("/send-message/:id", authMiddleware, adminMiddleware, sendMessage);
 router.patch("/confirmation", authMiddleware, confirmInjection);
