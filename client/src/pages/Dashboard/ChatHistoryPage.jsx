@@ -70,7 +70,7 @@ const ChatHistoryPage = () => {
               filteredChats?.map((item, index) => (
                 <TableRow key={index} className={"text-white text-center"}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell className={'text-pink-300'}>{item.userId.username}</TableCell>
+                  <TableCell className={"text-pink-300"}>{item.username}</TableCell>
                   <TableCell>
                     <div className="max-w-xs text-start">{item.message}</div>
                   </TableCell>

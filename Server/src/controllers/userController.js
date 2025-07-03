@@ -208,13 +208,18 @@ export const deleteUser = async (req, res) => {
 };
 
 export const confirmInjection = async (req, res) => {
-  const id = req.params.id || req.user.id;
+  const { id } = req.params;
+  const { weight, height, bloodPressure } = req.body;
   const today = dayjs().startOf("day").toDate(); // Ambil tanggal hari ini tanpa waktu
 
   try {
     const user = await userModel.findById(id);
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (!weight || !height || !bloodPressure) {
+      return res.status(400).json({ success: false, message: "All vitals must be provided" });
     }
 
     if (user.nextInjectionDate && dayjs(user.nextInjectionDate).isAfter(dayjs(), "day")) {
@@ -236,6 +241,9 @@ export const confirmInjection = async (req, res) => {
       user: user._id,
       injectionDate: lastInjectionDate.toDate(),
       injectionType: user.injectionType,
+      weight: parseFloat(weight),
+      height: parseFloat(height),
+      bloodPressure: bloodPressure.trim(),
     });
 
     const updatedUser = await userModel.findByIdAndUpdate(
@@ -243,6 +251,8 @@ export const confirmInjection = async (req, res) => {
       {
         lastInjectionDate: lastInjectionDate.toDate(),
         nextInjectionDate: nextInjectionDate.toDate(),
+        weight: parseFloat(weight),
+        height: parseFloat(height),
         isConfirmed: true,
       },
       { new: true }
@@ -261,6 +271,9 @@ export const confirmInjection = async (req, res) => {
         lastInjectionDate: updatedUser.lastInjectionDate,
         nextInjectionDate: updatedUser.nextInjectionDate,
         injectionType: updatedUser.injectionType,
+        weight: updatedUser.weight,
+        height: updatedUser.height,
+        bloodPressure: bloodPressure.trim(),
       },
     });
   } catch (error) {
@@ -322,7 +335,7 @@ export const getInjectionHistoryByMonth = async (req, res) => {
       });
     }
 
-    const histories = await injectionHistoryModel.find(filter).populate("user", ["username", "injectionType", "avatar"]).sort({ injectionDate: -1 });
+    const histories = await injectionHistoryModel.find(filter).populate("user").sort({ injectionDate: -1 });
 
     res.status(200).json({
       success: true,
@@ -513,6 +526,7 @@ export const sendMessage = async (req, res) => {
     // Simpan ke chat history
     await chatHistoryModel.create({
       userId: user._id,
+      username: user.username,
       message,
     });
 
@@ -524,7 +538,7 @@ export const sendMessage = async (req, res) => {
 
 export const getChatHistory = async (req, res) => {
   try {
-    const chatHistory = await chatHistoryModel.find().populate("userId", "username").sort({ createdAt: -1 });
+    const chatHistory = await chatHistoryModel.find().sort({ createdAt: -1 });
 
     if (!chatHistory || chatHistory.length === 0) {
       return res.status(200).json({ success: true, message: "No chat history found", data: [] });

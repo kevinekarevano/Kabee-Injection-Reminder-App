@@ -32,6 +32,10 @@ const userSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    bloodPresure: {
+      type: String,
+      default: "",
+    },
     birthDate: {
       type: Date,
       required: true,

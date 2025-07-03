@@ -6,6 +6,7 @@ import { Input } from "../ui/input";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
+import dayjs from "dayjs";
 
 const InjectionHistory = () => {
   const injectionHistory = useAppStore((state) => state.injectionHistory);
@@ -46,10 +47,10 @@ const InjectionHistory = () => {
               filteredHistory?.map((item, index) => (
                 <TableRow key={index} className={"text-lg"}>
                   <TableCell className={"text-[#EFF6F7] font-bold "}>{index + 1}</TableCell>
-                  <TableCell className={"text-[#EFF6F7] "}>{formatDate(item?.injectionDate)}</TableCell>
+                  <TableCell className={"text-[#EFF6F7] "}>{dayjs(item.createdAt).format("D MMMM YYYY HH:mm")}</TableCell>
                   <TableCell className={"text-[#EFF6F7] font-extralight italic"}>{formatInjectionType(item?.injectionType)}</TableCell>
                   <TableCell className={"text-[#0B2E33] underline"}>
-                    <Badge className={'bg-green-800'}>Completed</Badge>
+                    <Badge className={"bg-green-800"}>Completed</Badge>
                   </TableCell>
                 </TableRow>
               ))

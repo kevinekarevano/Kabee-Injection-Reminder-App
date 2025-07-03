@@ -1,12 +1,10 @@
 import InjectionHistory from "@/components/injectionHistory";
 import Profile from "@/components/profile";
 import InjectionSchedule from "@/components/injectionSchedule.jsx/index.jsx";
-import ConfirmButton from "@/components/confirmedButton";
 
 const HomePage = () => {
   return (
     <div className="bg-[#B8E3E9] pb-20 flex flex-col h-full">
-      <ConfirmButton />
 
       <div className="container pt-5   mx-auto max-w-6xl">
         {/* Profile */}

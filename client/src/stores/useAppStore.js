@@ -92,9 +92,9 @@ const useAppStore = create((set, get) => ({
     });
   },
 
-  injectionConfirmation: async (id) => {
+  injectionConfirmation: async (id, payload) => {
     try {
-      const { data } = await axios.patch(`${import.meta.env.VITE_API_URL}/api/user/confirmation/${id ? id : ""}`, {}, { withCredentials: true });
+      const { data } = await axios.patch(`${import.meta.env.VITE_API_URL}/api/user/confirmation/${id}`, payload, { withCredentials: true });
       if (data.success) {
         toast.success(data.message);
         get().getUserData();

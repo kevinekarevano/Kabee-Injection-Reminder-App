@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axios from "axios";
 import formatInjectionType from "@/helpers/formatInjectionType";
-import { formatDate } from "@/helpers/formatDate";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { handleExportExcel, handleExportPDF } from "@/helpers/exportReport";
+import dayjs from "dayjs";
+import getAge from "@/helpers/getAge";
+import { formatDate } from "@/helpers/formatDate";
 
 const DataReportPage = () => {
   const [userDataReport, setUserDataReport] = useState([]);
@@ -114,9 +116,19 @@ const DataReportPage = () => {
           <TableHeader>
             <TableRow>
               <TableHead>#</TableHead>
-              <TableHead>Username</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Age</TableHead>
               <TableHead>Injection Type</TableHead>
               <TableHead>Injection Date</TableHead>
+              <TableHead>Weight</TableHead>
+              <TableHead>Height</TableHead>
+              <TableHead>Blood Pressure</TableHead>
+              <TableHead>Children</TableHead>
+              <TableHead>Address</TableHead>
+              <TableHead>Phone Number</TableHead>
+              <TableHead>NIK</TableHead>
+              <TableHead>Birth Date</TableHead>
+              <TableHead>Religion</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Avatar</TableHead>
             </TableRow>
@@ -133,8 +145,18 @@ const DataReportPage = () => {
                 <TableRow key={index} className={"text-white text-center"}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{item.user.username}</TableCell>
+                  <TableCell>{getAge(item.user.birthDate)}</TableCell>
                   <TableCell className={"italic"}>{formatInjectionType(item.user.injectionType) || "-"}</TableCell>
-                  <TableCell className={"text-pink-300"}>{formatDate(item.injectionDate) || "-"}</TableCell>
+                  <TableCell className={"text-pink-300"}>{dayjs(item.createdAt).format("D MMMM YYYY HH:mm") || "-"}</TableCell>
+                  <TableCell>{item.weight}</TableCell>
+                  <TableCell>{item.height}</TableCell>
+                  <TableCell>{item.bloodPressure}</TableCell>
+                  <TableCell>{item.user.numberOfChildren}</TableCell>
+                  <TableCell>{item.user.address}</TableCell>
+                  <TableCell>{item.user.phoneNumber}</TableCell>
+                  <TableCell>{item.user.nik}</TableCell>
+                  <TableCell>{formatDate(item.user.birthDate)}</TableCell>
+                  <TableCell>{item.user.religion}</TableCell>
                   <TableCell>
                     <Badge className={"bg-green-900 rounded-sm text-green-300 font-bold"}>Completed</Badge>
                   </TableCell>

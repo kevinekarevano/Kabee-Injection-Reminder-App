@@ -33,7 +33,7 @@ const sidebarMenus = [
         to: "/dashboard/users/data-entry",
       },
       {
-        label: "Pending Injection",
+        label: "Injection",
         icon: <Syringe size={17} />,
         to: "/dashboard/users/pending-injection",
       },

@@ -1,8 +1,7 @@
 import useAppStore from "@/stores/useAppStore";
 import dayjs from "dayjs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
-const ConfirmButton = () => {
+const Announcement = () => {
   const userData = useAppStore((state) => state.userData);
   const injectionConfirmation = useAppStore((state) => state.injectionConfirmation);
 
@@ -13,23 +12,14 @@ const ConfirmButton = () => {
     return null;
   } else {
     return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <p
-              onClick={() => injectionConfirmation()}
-              className={"mx-auto cursor-pointer px-3 py-1 rounded-md mt-2 border-2 bg-teal-200 text-teal-900 hover:bg-teal-200 shadow-[0px_-1px_79px_7px_rgba(0,_0,_0,_0.2)] border-teal-700 font-bold font-poppins text-lg  "}
-            >
-              Confirm Injection
-            </p>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Click this button to confirm your scheduled injection</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <div className="py-3 bg-emerald-800">
+        <p className="text-center text-white font-poppins">
+          {" "}
+          <span className="font-semibold">Sudah waktunya KB!</span> Silahkan segera datang ke tempat KB hari ini 💊
+        </p>
+      </div>
     );
   }
 };
 
-export default ConfirmButton;
+export default Announcement;

@@ -16,6 +16,18 @@ const injectionHistorySchema = new mongoose.Schema(
       enum: ["1_month", "3_month"],
       required: true,
     },
+    weight: {
+      type: Number,
+      required: true,
+    },
+    height: {
+      type: Number,
+      required: true,
+    },
+    bloodPressure: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

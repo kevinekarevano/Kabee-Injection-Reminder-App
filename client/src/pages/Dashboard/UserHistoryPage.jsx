@@ -5,6 +5,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { formatDate } from "@/helpers/formatDate";
 import formatInjectionType from "@/helpers/formatInjectionType";
 import useAppStore from "@/stores/useAppStore";
+import dayjs from "dayjs";
 import { useEffect } from "react";
 import { Link, useParams } from "react-router";
 
@@ -45,7 +46,7 @@ const UserHistoryPage = () => {
               injectionHistory?.map((item, index) => (
                 <TableRow key={index} className={"text-lg"}>
                   <TableCell className={"text-[#EFF6F7] font-bold "}>{index + 1}.</TableCell>
-                  <TableCell className={"text-[#EFF6F7] "}>{formatDate(item?.injectionDate)}</TableCell>
+                  <TableCell className={"text-[#EFF6F7] "}>{dayjs(item.createdAt).format("D MMMM YYYY HH:mm")}</TableCell>
                   <TableCell className={"text-[#EFF6F7] font-extralight italic"}>{formatInjectionType(item?.injectionType)}</TableCell>
                   <TableCell>
                     <Badge className={"bg-green-700"}>Completed</Badge>

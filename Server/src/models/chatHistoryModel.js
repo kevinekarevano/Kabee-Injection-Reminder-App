@@ -7,6 +7,10 @@ const chatSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    username: {
+      type: String,
+      required: true,
+    },
     from: {
       type: String,
       default: "admin",

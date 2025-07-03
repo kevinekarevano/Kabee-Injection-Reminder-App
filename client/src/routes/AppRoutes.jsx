@@ -13,7 +13,7 @@ import ChatPage from "@/pages/Dashboard/ChatPage";
 import ProtectedRoute from "@/components/routes/ProtectedRoute";
 import RoleBasedRoute from "@/components/routes/RoleBasedRoute";
 import DataEntryPage from "@/pages/Dashboard/DataEntryPage";
-import PendingInjectionPage from "@/pages/Dashboard/PendingInjectionPage";
+import PendingInjectionPage from "@/pages/Dashboard/InjectionPage";
 import DataReportPage from "@/pages/Dashboard/DataReportPage";
 import ChatListPage from "@/pages/Dashboard/ChatListPage";
 import ChatHistoryPage from "@/pages/Dashboard/ChatHistoryPage";
