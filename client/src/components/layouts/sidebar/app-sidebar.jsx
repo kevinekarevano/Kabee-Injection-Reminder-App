@@ -1,6 +1,6 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
 import { NavLink, useNavigate } from "react-router";
-import { CircleUserRound, Home, UserPlus, Grid2x2Plus, Syringe, Printer, MessageCircleMore, History } from "lucide-react";
+import { CircleUserRound, Home, UserPlus, Grid2x2Plus, Syringe, Printer, MessageCircleMore, History, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import useAppStore from "@/stores/useAppStore";
@@ -33,7 +33,7 @@ const sidebarMenus = [
         to: "/dashboard/users/data-entry",
       },
       {
-        label: "Injection",
+        label: "Confirm Injection",
         icon: <Syringe size={17} />,
         to: "/dashboard/users/pending-injection",
       },
@@ -51,6 +51,21 @@ const sidebarMenus = [
         label: "Chat History",
         icon: <History size={17} />,
         to: "/dashboard/chat/history",
+      },
+    ],
+  },
+  {
+    label: "Articles",
+    subMenu: [
+      {
+        label: "Create Article",
+        icon: <FileText size={17} />,
+        to: "/dashboard/articles/create",
+      },
+      {
+        label: "Manage Articles",
+        icon: <FileText size={17} />,
+        to: "/dashboard/articles",
       },
     ],
   },
@@ -93,15 +108,15 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="text-zinc-300 border-zinc-800 ">
-      <SidebarContent className="bg-[#2E3B3D] p-5">
+    <Sidebar className="border-[#dde4db] text-[#24302b]">
+      <SidebarContent className="bg-[#fbf8f1] p-5">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarMenus.map((menu) =>
                 menu.subMenu ? (
                   <SidebarMenuItem key={menu.label}>
-                    <SidebarMenuSubButton className="!text-zinc-300 hover:bg-transparent">
+                    <SidebarMenuSubButton className="!text-[#24302b] hover:bg-transparent">
                       <span>{menu.label}</span>
                     </SidebarMenuSubButton>
                     <SidebarMenuSub>
@@ -110,7 +125,9 @@ export function AppSidebar() {
                           <NavLink
                             to={sub.to}
                             end
-                            className={({ isActive }) => `flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-300 text-sm ${isActive ? "bg-[#1F2728] text-white font-semibold" : "hover:bg-[#3a4b4d] !text-zinc-200"}`}
+                            className={({ isActive }) =>
+                              `flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-300 ${isActive ? "bg-[#edf4ef] font-semibold text-[#2f7c6d]" : "text-[#5d6f69] hover:bg-white hover:text-[#24302b]"}`
+                            }
                           >
                             {sub.icon}
                             <span>{sub.label}</span>
@@ -124,20 +141,22 @@ export function AppSidebar() {
                     <NavLink
                       to={menu.to}
                       end
-                      className={({ isActive }) => `flex items-center gap-2 px-2 py-2 rounded-md transition-all duration-300 text-sm ${isActive ? "bg-[#1F2728] text-white font-semibold" : "hover:bg-[#3a4b4d] !text-zinc-200"}`}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-300 ${isActive ? "bg-[#edf4ef] font-semibold text-[#2f7c6d]" : "text-[#5d6f69] hover:bg-white hover:text-[#24302b]"}`
+                      }
                     >
                       {menu.icon}
                       <span>{menu.label}</span>
                     </NavLink>
                   </SidebarMenuItem>
-                )
+                ),
               )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="bg-[#2E3B3D] p-5">
-        <Button className={"cursor-pointer bg-red-800 hover:bg-red-700"} onClick={handleLogout}>
+      <SidebarFooter className="bg-[#fbf8f1] p-5">
+        <Button className={"cursor-pointer rounded-full bg-[#c34a39] text-white hover:bg-[#ab3e30]"} onClick={handleLogout}>
           Logout
           <LogOut size={17} />
         </Button>

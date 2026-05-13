@@ -10,6 +10,7 @@ import connectDB from "./config/connectDB.js";
 import userRoutes from "./routers/userRoutes.js";
 import authRoutes from "./routers/authRoutes.js";
 import cronRoutes from "./routers/cronRoutes.js";
+import articleRoutes from "./routers/articleRoutes.js";
 import cookieParser from "cookie-parser";
 import "./services/telegramBot.js";
 import "./services/injectionReminder.js";
@@ -31,6 +32,7 @@ app.get("/", (req, res) => res.send("Kabee!"));
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cron", cronRoutes);
+app.use("/api/articles", articleRoutes);
 
 // start the server
 app.listen(PORT, () => {

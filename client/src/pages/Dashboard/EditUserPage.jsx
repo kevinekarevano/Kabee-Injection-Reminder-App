@@ -28,6 +28,8 @@ const EditUserPage = () => {
   const [originalName, setOriginalName] = useState("");
   const [password, setPassword] = useState("");
   const [injectionType, setInjectionType] = useState("");
+  const [contraceptiveMethod, setContraceptiveMethod] = useState("injection");
+  const [dailyPillTime, setDailyPillTime] = useState("");
   const [initialInjectionDate, setInitialInjectionDate] = useState("");
   const [isInitialInjectionDateSet, setIsInitialInjectionDateSet] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -81,6 +83,8 @@ const EditUserPage = () => {
         setPhoneNumber(user.phoneNumber || "");
         setPassword("");
         setInjectionType(user.injectionType || "");
+        setContraceptiveMethod(user.contraceptiveMethod || "injection");
+        setDailyPillTime(user.dailyPillTime || "");
         setAvatarPreview(user.avatar?.url || null);
         setOriginalName(user.username || "");
 
@@ -105,6 +109,8 @@ const EditUserPage = () => {
     setIsLoading(true);
 
     // Validasi minimal satu field harus diisi
+    const shouldRequireInjectionFields = contraceptiveMethod !== "pill";
+
     if (
       !username.trim() &&
       !nik.trim() &&
@@ -116,7 +122,7 @@ const EditUserPage = () => {
       !religion &&
       !phoneNumber.trim() &&
       !password.trim() &&
-      !injectionType &&
+      (shouldRequireInjectionFields ? !injectionType : false) &&
       !avatarFile &&
       !initialInjectionDate
     ) {
@@ -138,7 +144,9 @@ const EditUserPage = () => {
     if (religion) formData.append("religion", religion);
     if (phoneNumber.trim()) formData.append("phoneNumber", phoneNumber);
     if (password.trim()) formData.append("password", password);
-    if (injectionType) formData.append("injectionType", injectionType);
+    if (contraceptiveMethod !== "pill" && injectionType) formData.append("injectionType", injectionType);
+    if (contraceptiveMethod) formData.append("contraceptiveMethod", contraceptiveMethod);
+    if (contraceptiveMethod === "pill" && dailyPillTime) formData.append("dailyPillTime", dailyPillTime);
     if (avatarFile) formData.append("avatar", avatarFile);
     if (initialInjectionDate) formData.append("initialInjectionDate", initialInjectionDate);
 
@@ -176,34 +184,36 @@ const EditUserPage = () => {
   }, [id]);
 
   return (
-    <div className="w-full">
+    <div className="w-full text-[#24302b]">
       <BreadcrumbCustom pageName={"Detail user"} />
-      <h1 className="text-white font-bold text-xl">Edit User - {originalName}</h1>
-      <div onSubmit={handleSubmit} className="mt-3 bg-zinc-700 p-5 rounded-sm">
-        {/* Row 1: Username, NIK, Birth Date */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+      <div className="max-w-2xl">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#72827a]">User Management</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#24352f]">Edit User - {originalName}</h1>
+      </div>
+      <div onSubmit={handleSubmit} className="mt-6 rounded-[2rem] border border-[#dde4db] bg-white p-5 shadow-[0_16px_30px_rgba(34,53,48,0.04)]">
+        <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="username">
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="username">
               Username
             </Label>
-            <Input value={username} onChange={(e) => setUsername(e.target.value)} className="bg-zinc-800 border-zinc-900 text-zinc-300" type="text" id="username" placeholder="Enter username..." />
+            <Input value={username} onChange={(e) => setUsername(e.target.value)} className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="text" id="username" placeholder="Enter username..." />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="nik">
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="nik">
               NIK
             </Label>
-            <Input value={nik} onChange={(e) => setNik(e.target.value)} className="bg-zinc-800 border-zinc-900 text-zinc-300" type="text" id="nik" placeholder="Enter NIK..." />
+            <Input value={nik} onChange={(e) => setNik(e.target.value)} className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="text" id="nik" placeholder="Enter NIK..." />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="birthDate">
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="birthDate">
               Birth Date
             </Label>
             <Input
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
-              className="bg-zinc-800 border-zinc-900 text-zinc-300 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:filter"
+              className="border-[#dde4db] bg-white text-[#24302b] [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:contrast-75"
               type="date"
               id="birthDate"
               max={new Date().toISOString().split("T")[0]}
@@ -211,30 +221,29 @@ const EditUserPage = () => {
           </div>
         </div>
 
-        {/* Row 2: Weight, Height, Number of Children */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+        <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="weight">
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="weight">
               Weight (kg)
             </Label>
-            <Input value={weight} onChange={(e) => setWeight(e.target.value)} className="bg-zinc-800 border-zinc-900 text-zinc-300" type="number" id="weight" placeholder="Enter weight..." min="1" step="0.1" />
+            <Input value={weight} onChange={(e) => setWeight(e.target.value)} className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="number" id="weight" placeholder="Enter weight..." min="1" step="0.1" />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="height">
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="height">
               Height (cm)
             </Label>
-            <Input value={height} onChange={(e) => setHeight(e.target.value)} className="bg-zinc-800 border-zinc-900 text-zinc-300" type="number" id="height" placeholder="Enter height..." min="1" step="0.1" />
+            <Input value={height} onChange={(e) => setHeight(e.target.value)} className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="number" id="height" placeholder="Enter height..." min="1" step="0.1" />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="numberOfChildren">
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="numberOfChildren">
               Number of Children
             </Label>
             <Input
               value={numberOfChildren}
               onChange={(e) => setNumberOfChildren(e.target.value)}
-              className="bg-zinc-800 border-zinc-900 text-zinc-300"
+              className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"
               type="number"
               id="numberOfChildren"
               placeholder="Enter number of children..."
@@ -244,22 +253,21 @@ const EditUserPage = () => {
           </div>
         </div>
 
-        {/* Row 3: Address, Religion, Phone Number */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+        <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="address">
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="address">
               Address
             </Label>
-            <Input value={address} onChange={(e) => setAddress(e.target.value)} className="bg-zinc-800 border-zinc-900 text-zinc-300" type="text" id="address" placeholder="Enter address..." />
+            <Input value={address} onChange={(e) => setAddress(e.target.value)} className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="text" id="address" placeholder="Enter address..." />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white">Religion</Label>
+            <Label className="mb-2 font-medium text-[#24302b]">Religion</Label>
             <Select onValueChange={(e) => setReligion(e)} value={religion}>
-              <SelectTrigger className="w-full bg-zinc-800 border-zinc-900 text-zinc-300">
+              <SelectTrigger className="w-full border-[#dde4db] bg-white text-[#24302b]">
                 <SelectValue placeholder="Choose religion" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-800 text-zinc-200 border-none">
+              <SelectContent className="border-[#dde4db] bg-white text-[#24302b]">
                 <SelectItem value="Islam">Islam</SelectItem>
                 <SelectItem value="Kristen">Kristen</SelectItem>
                 <SelectItem value="Katolik">Katolik</SelectItem>
@@ -271,74 +279,86 @@ const EditUserPage = () => {
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="phoneNumber">
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="phoneNumber">
               Phone Number
             </Label>
-            <Input value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="bg-zinc-800 border-zinc-900 text-zinc-300" type="tel" id="phoneNumber" placeholder="Enter phone number..." />
+            <Input value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="tel" id="phoneNumber" placeholder="Enter phone number..." />
           </div>
         </div>
 
-        {/* Row 4: Password, Initial Injection Date, Injection Type */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 ">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div className="relative">
-            <Label className="font-medium mb-2 text-white" htmlFor="password">
-              Password <span className="text-sm text-gray-400">(Leave empty to keep current)</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="password">
+              Password <span className="text-sm text-[#72827a]">(Leave empty to keep current)</span>
             </Label>
-            <Input value={password} onChange={(e) => setPassword(e.target.value)} className="bg-zinc-800 border-zinc-900 pr-10 text-zinc-300" type={showPassword ? "text" : "password"} id="password" placeholder="Enter new password..." />
-            <Button type="button" onClick={togglePasswordVisibility} className="absolute border-none bg-transparent hover:border-none hover:bg-transparent cursor-pointer top-6 right-0 text-zinc-500 hover:text-zinc-300">
-              {!showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border-[#dde4db] bg-white pr-10 text-[#24302b] placeholder:text-[#8b9a93]"
+              type={showPassword ? "text" : "password"}
+              id="password"
+              placeholder="Enter new password..."
+            />
+            <Button type="button" onClick={togglePasswordVisibility} className="absolute right-0 top-6 cursor-pointer border-none bg-transparent text-[#72827a] hover:border-none hover:bg-transparent hover:text-[#24302b]">
+              {!showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </Button>
           </div>
 
-          <div className={isInitialInjectionDateSet ? "hidden" : ""}>
+          <div className={isInitialInjectionDateSet || contraceptiveMethod === "pill" ? "hidden" : ""}>
             <div>
-              <Label className="font-medium mb-2 text-white" htmlFor="initialInjectionDate">
+              <Label className="mb-2 font-medium text-[#24302b]" htmlFor="initialInjectionDate">
                 Initial Injection Date
               </Label>
               <Input
                 value={initialInjectionDate}
                 onChange={(e) => setInitialInjectionDate(e.target.value)}
-                className="bg-zinc-800 border-zinc-900 text-zinc-300 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:filter"
+                className="border-[#dde4db] bg-white text-[#24302b] [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:contrast-75"
                 type="date"
                 id="initialInjectionDate"
                 min={new Date().toISOString().split("T")[0]}
               />
-              {!initialInjectionDate && <p className="text-xs text-red-400 mt-2 text-right">Please select an Initial Injection Date.</p>}
+              {!initialInjectionDate && contraceptiveMethod !== "pill" && <p className="mt-2 text-right text-xs text-red-500">Please select an Initial Injection Date.</p>}
             </div>
           </div>
 
-          <div>
-            <Label className="font-medium mb-2 text-white">Injection Type</Label>
-            <Select onValueChange={(e) => setInjectionType(e)} value={injectionType}>
-              <SelectTrigger className="w-full bg-zinc-800 border-zinc-900 text-zinc-300">
-                <SelectValue placeholder="Choose type of injection" />
-              </SelectTrigger>
-              <SelectContent className="bg-zinc-800 text-zinc-200 border-none">
-                <SelectItem value="1_month">1 Month</SelectItem>
-                <SelectItem value="3_month">3 Month</SelectItem>
-              </SelectContent>
-            </Select>
-            {!injectionType && <p className="text-xs text-red-400 mt-2 text-right">Please select an injection type.</p>}
-          </div>
+          {contraceptiveMethod !== "pill" ? (
+            <div>
+              <Label className="mb-2 font-medium text-[#24302b]">Injection Type</Label>
+              <Select onValueChange={(e) => setInjectionType(e)} value={injectionType}>
+                <SelectTrigger className="w-full border-[#dde4db] bg-white text-[#24302b]">
+                  <SelectValue placeholder="Choose type of injection" />
+                </SelectTrigger>
+                <SelectContent className="border-[#dde4db] bg-white text-[#24302b]">
+                  <SelectItem value="1_month">1 Month</SelectItem>
+                  <SelectItem value="3_month">3 Month</SelectItem>
+                </SelectContent>
+              </Select>
+              {!injectionType && <p className="mt-2 text-right text-xs text-red-500">Please select an injection type.</p>}
+            </div>
+          ) : (
+            <div>
+              <Label className="mb-2 font-medium text-[#24302b]">Injection Type</Label>
+              <div className="rounded-md border border-[#dde4db] bg-[#fbf8f1] px-3 py-2 text-[#5d6f69]">Tidak berlaku untuk metode pil</div>
+            </div>
+          )}
         </div>
 
-        {/* Avatar Section */}
-        <div className="sm:w-1/3 mt-5">
-          <Label className="font-medium text-white" htmlFor="avatar">
-            Avatar Image <span className="text-sm text-gray-400">(Leave empty to keep current)</span>
+        <div className="mt-5 sm:w-1/3">
+          <Label className="font-medium text-[#24302b]" htmlFor="avatar">
+            Avatar Image <span className="text-sm text-[#72827a]">(Leave empty to keep current)</span>
           </Label>
 
           <div className="flex items-center gap-2">
-            <Input onChange={handleAvatarChange} accept=".jpg,.jpeg,.png" className="bg-zinc-800 file:text-white file:font-bold border-zinc-900 text-zinc-400" type="file" id="avatar" />
+            <Input onChange={handleAvatarChange} accept=".jpg,.jpeg,.png" className="border-[#dde4db] bg-white text-[#5d6f69] file:font-bold file:text-white" type="file" id="avatar" />
 
-            <Avatar className="cursor-pointer w-15 h-15 border-zinc-800 shadow-md border-2">
+            <Avatar className="h-15 w-15 cursor-pointer border-2 border-[#dde4db] shadow-md">
               <AvatarImage className="object-cover" src={avatarPreview ? avatarPreview : "/no-image.png"} />
-              <AvatarFallback className="font-poppins font-bold text-xl text-white bg-[#0B2E33]">KB</AvatarFallback>
+              <AvatarFallback className="bg-[#2f7c6d] font-poppins text-xl font-bold text-white">KB</AvatarFallback>
             </Avatar>
           </div>
 
-          <div className="flex mt-10 gap-2">
-            <Button disabled={isLoading} onClick={handleSubmit} className={`${isLoading ? "bg-sky-900 hover:bg-sky-900" : "bg-sky-300 hover:bg-sky-400"} w-1/2 text-sky-900 hover:text-sky-950 duration-500 font-bold cursor-pointer`}>
+          <div className="mt-10 flex gap-2">
+            <Button disabled={isLoading} onClick={handleSubmit} className={`${isLoading ? "bg-[#2f7c6d] hover:bg-[#2f7c6d]" : "bg-[#2f7c6d] hover:bg-[#275f55]"} w-1/2 cursor-pointer font-bold text-white duration-500`}>
               {isLoading ? (
                 <Loader />
               ) : (
@@ -349,7 +369,7 @@ const EditUserPage = () => {
               )}
             </Button>
             <Link className="block w-full" to={isLoading ? "" : "/dashboard/users"}>
-              <Button disabled={isLoading} className="bg-red-300 text-red-900 hover:bg-red-400 hover:text-red-950 duration-500 font-bold cursor-pointer">
+              <Button disabled={isLoading} className="cursor-pointer bg-[#c34a39] font-bold text-white duration-500 hover:bg-[#ab3e30]">
                 Cancel
               </Button>
             </Link>

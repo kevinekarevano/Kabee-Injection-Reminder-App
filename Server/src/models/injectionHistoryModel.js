@@ -11,27 +11,44 @@ const injectionHistorySchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    method: {
+      type: String,
+      enum: ["injection", "pill"],
+      default: "injection",
+    },
     injectionType: {
       type: String,
       enum: ["1_month", "3_month"],
-      required: true,
+      default: null,
     },
     weight: {
       type: Number,
-      required: true,
+      default: null,
     },
     height: {
       type: Number,
-      required: true,
+      default: null,
     },
     bloodPressure: {
       type: String,
-      required: true,
+      default: null,
+    },
+    scheduledAt: {
+      type: Date,
+      default: null,
+    },
+    consumedAt: {
+      type: Date,
+      default: null,
+    },
+    delayMinutes: {
+      type: Number,
+      default: 0,
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const injectionHistoryModel = mongoose.model("InjectionHistory", injectionHistorySchema);

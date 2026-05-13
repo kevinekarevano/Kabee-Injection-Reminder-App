@@ -24,14 +24,14 @@ const RoleBasedRoute = ({ allowedRoles, children }) => {
 
     // If user tries to access admin routes, redirect to home
     if (userData.role === "user" && allowedRoles.includes("admin") && !allowedRoles.includes("user")) {
-      return <Navigate to="/" replace />;
+      return <Navigate to="/user" replace />;
     }
   }
 
   // Check if user role is allowed for this route
   if (!allowedRoles.includes(userData?.role)) {
     // Default redirect based on role
-    const redirectPath = userData?.role === "admin" ? "/dashboard" : "/";
+    const redirectPath = userData?.role === "admin" ? "/dashboard" : "/user";
     return <Navigate to={redirectPath} replace />;
   }
 

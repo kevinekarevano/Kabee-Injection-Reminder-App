@@ -10,6 +10,20 @@ import chatHistoryModel from "../models/chatHistoryModel.js";
 
 dayjs.extend(isSameOrBefore);
 
+const getNextPillDateTime = (dailyPillTime) => {
+  if (!dailyPillTime) return null;
+
+  const [hours, minutes] = dailyPillTime.split(":").map(Number);
+  const now = dayjs();
+  let nextPillDateTime = dayjs().hour(hours).minute(minutes).second(0).millisecond(0);
+
+  if (nextPillDateTime.isSame(now) || nextPillDateTime.isBefore(now)) {
+    nextPillDateTime = nextPillDateTime.add(1, "day");
+  }
+
+  return nextPillDateTime.toDate();
+};
+
 export const getUserData = async (req, res) => {
   const { id } = req.user;
   try {
@@ -38,6 +52,8 @@ export const getUserData = async (req, res) => {
         registrationCode: user.registrationCode,
         avatar: user.avatar.url,
         injectionType: user.injectionType,
+        contraceptiveMethod: user.contraceptiveMethod,
+        dailyPillTime: user.dailyPillTime,
         nextInjectionDate: user.nextInjectionDate,
         lastInjectionDate: user.lastInjectionDate,
         registrationCode: user.registrationCode,
@@ -51,7 +67,7 @@ export const getUserData = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  let { username, nik, weight, height, numberOfChildren, birthDate, address, religion, phoneNumber, password } = req.body;
+  let { username, nik, weight, height, numberOfChildren, birthDate, address, religion, phoneNumber, password, contraceptiveMethod, dailyPillTime } = req.body;
   const avatarFile = req.file;
 
   username = username.trim();
@@ -62,6 +78,11 @@ export const createUser = async (req, res) => {
 
   if (!username || !password || !nik || !birthDate || !address || !religion || !phoneNumber || !avatarFile || !weight || !height || !numberOfChildren) {
     return res.status(400).json({ success: false, message: "Please provide all required fields" });
+  }
+
+  const normalizedMethod = contraceptiveMethod || "injection";
+  if (normalizedMethod === "pill" && (!dailyPillTime || !dailyPillTime.trim())) {
+    return res.status(400).json({ success: false, message: "Daily pill time is required for pill method" });
   }
 
   // Check if the user already exists
@@ -100,6 +121,8 @@ export const createUser = async (req, res) => {
     // const lastInjectionDateAsDate = lastInjectionDate.toDate();
     // const nextInjectionDateAsDate = nextInjectionDate.toDate();
 
+    const initialNextPillDate = normalizedMethod === "pill" ? getNextPillDateTime(dailyPillTime) : null;
+
     const newUser = await userModel.create({
       username,
       nik,
@@ -111,6 +134,11 @@ export const createUser = async (req, res) => {
       religion,
       phoneNumber,
       password: hashedPassword,
+      contraceptiveMethod: normalizedMethod,
+      dailyPillTime: normalizedMethod === "pill" ? dailyPillTime : null,
+      lastPillDate: null,
+      lastInjectionDate: null,
+      nextInjectionDate: normalizedMethod === "pill" ? initialNextPillDate : null,
       // injectionType
       // nextInjectionDate: nextInjectionDateAsDate,
       // lastInjectionDate: lastInjectionDateAsDate,
@@ -240,6 +268,7 @@ export const confirmInjection = async (req, res) => {
     await injectionHistoryModel.create({
       user: user._id,
       injectionDate: lastInjectionDate.toDate(),
+      method: "injection",
       injectionType: user.injectionType,
       weight: parseFloat(weight),
       height: parseFloat(height),
@@ -255,7 +284,7 @@ export const confirmInjection = async (req, res) => {
         height: parseFloat(height),
         isConfirmed: true,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedUser) {
@@ -278,6 +307,68 @@ export const confirmInjection = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error confirming injection", error: error.message });
+  }
+};
+
+export const confirmPillIntake = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (user.contraceptiveMethod !== "pill") {
+      return res.status(400).json({ success: false, message: "This feature is only for pill users" });
+    }
+
+    if (!user.dailyPillTime) {
+      return res.status(400).json({ success: false, message: "Daily pill time is not set" });
+    }
+
+    const now = dayjs();
+    let scheduledAt = user.nextInjectionDate ? dayjs(user.nextInjectionDate) : null;
+
+    if (!scheduledAt || !scheduledAt.isValid()) {
+      const fallbackSchedule = getNextPillDateTime(user.dailyPillTime);
+      if (!fallbackSchedule) {
+        return res.status(400).json({ success: false, message: "Invalid daily pill time format" });
+      }
+      scheduledAt = dayjs(fallbackSchedule);
+    }
+
+    const delayMinutes = Math.max(0, now.diff(scheduledAt, "minute"));
+    const nextPillDate = scheduledAt.add(1, "day");
+
+    await injectionHistoryModel.create({
+      user: user._id,
+      method: "pill",
+      injectionDate: now.toDate(),
+      consumedAt: now.toDate(),
+      scheduledAt: scheduledAt.toDate(),
+      delayMinutes,
+    });
+
+    user.lastPillDate = now.toDate();
+    user.lastInjectionDate = now.toDate();
+    user.nextInjectionDate = nextPillDate.toDate();
+    user.isConfirmed = true;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: delayMinutes > 0 ? `Pill confirmed. You were ${delayMinutes} minutes late.` : "Pill confirmed on time.",
+      data: {
+        lastPillDate: user.lastPillDate,
+        nextPillDate: user.nextInjectionDate,
+        scheduledAt: scheduledAt.toDate(),
+        confirmedAt: now.toDate(),
+        delayMinutes,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Error confirming pill intake", error: error.message });
   }
 };
 
@@ -315,7 +406,7 @@ export const getInjectionHistoryByMonth = async (req, res) => {
   try {
     const { month, year } = req.query;
 
-    let filter = {};
+    let filter = {}; // Include both injection and pill records
 
     if (year && month) {
       // Filter by specific month and year
@@ -353,7 +444,7 @@ export const getInjectionHistoryByMonth = async (req, res) => {
 
 export const updatedUser = async (req, res) => {
   const { id } = req.params;
-  const { username, password, injectionType, nik, weight, height, numberOfChildren, birthDate, address, phoneNumber, religion, initialInjectionDate } = req.body;
+  const { username, password, injectionType, nik, weight, height, numberOfChildren, birthDate, address, phoneNumber, religion, initialInjectionDate, contraceptiveMethod, dailyPillTime } = req.body;
   const avatarFile = req.file;
 
   try {
@@ -400,10 +491,10 @@ export const updatedUser = async (req, res) => {
     }
 
     // update injectionType & initialInjectionDate
-    if (injectionType) {
+    if (injectionType && contraceptiveMethod !== "pill") {
       user.injectionType = injectionType;
     }
-    if (initialInjectionDate) {
+    if (initialInjectionDate && contraceptiveMethod !== "pill") {
       user.initialInjectionDate = new Date(initialInjectionDate);
       user.nextInjectionDate = new Date(initialInjectionDate); // Next = initial date
       user.lastInjectionDate = null; // Belum pernah suntik
@@ -447,6 +538,26 @@ export const updatedUser = async (req, res) => {
     // update religion
     if (religion) {
       user.religion = religion;
+    }
+
+    // update contraceptive method & pill settings
+    if (contraceptiveMethod) {
+      user.contraceptiveMethod = contraceptiveMethod;
+      if (contraceptiveMethod === "pill") {
+        user.dailyPillTime = dailyPillTime || user.dailyPillTime;
+        // Use nextInjectionDate/lastInjectionDate as a shared schedule display field in dashboard.
+        const baseLastPillDate = user.lastPillDate || dayjs().startOf("day").toDate();
+        user.lastPillDate = baseLastPillDate;
+        user.lastInjectionDate = baseLastPillDate;
+
+        const effectivePillTime = dailyPillTime || user.dailyPillTime;
+        user.nextInjectionDate = getNextPillDateTime(effectivePillTime);
+        user.injectionType = null;
+      } else if (contraceptiveMethod === "injection") {
+        // Clear pill-specific fields when switching back to injection
+        user.dailyPillTime = null;
+        user.lastPillDate = null;
+      }
     }
 
     // update avatar
@@ -575,6 +686,7 @@ export const getUsersWithPendingInjection = async (req, res) => {
 
     const pendingUsers = await userModel.find({
       role: "user",
+      contraceptiveMethod: "injection",
       isConfirmed: false,
       nextInjectionDate: { $lte: endOfToday },
     });

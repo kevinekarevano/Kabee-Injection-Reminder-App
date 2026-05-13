@@ -1,4 +1,4 @@
-import { sendInjectionReminder } from "../services/injectionReminder.js";
+import { sendInjectionReminder, sendPillReminder } from "../services/injectionReminder.js";
 import reminderLogModel from "../models/reminderLogModel.js";
 
 export const handleCron = async (req, res) => {
@@ -8,7 +8,7 @@ export const handleCron = async (req, res) => {
   }
 
   try {
-    await sendInjectionReminder();
+    await Promise.all([sendInjectionReminder(), sendPillReminder()]);
     res.status(200).send("Cron executed successfully");
   } catch (err) {
     console.error(err);

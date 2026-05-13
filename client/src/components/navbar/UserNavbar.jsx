@@ -31,15 +31,19 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="p-5 bg-[#B8E3E9]">
-      <div className="flex justify-between items-center">
-        <Link to={"/"}>
-          <img className="w-28" src="/logo.svg" alt="kabee_logo" />
+    <nav className="sticky top-0 z-40 border-b border-[#dde4db] bg-[#fbf8f1]/95 backdrop-blur-md">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-3 md:px-8 md:py-4">
+        <Link to={"/user"} className="inline-flex items-center gap-3 transition hover:opacity-90">
+          <img className="w-24 md:w-28" src="/logo.svg" alt="kabee_logo" />
+          
         </Link>
 
-        <div onClick={handleLogout} className="bg-red-900 group cursor-pointer transition-all duration-300 hover:text hover:bg-red-800 md:hover:px-6 hover:px-4 rounded-full px-3 md:px-5 py-1 flex  gap-2 items-center justify-center    border-2 border-zinc-800 ">
-          <p className="font-poppins text-lg  duration-500 tracking-wide text-zinc-300 group-hover:text-zinc-100 ">Logout</p>
-          <LogOut fontWeight={20} className="text-zinc-300  duration-500  group-hover:text-zinc-100" />
+        <div
+          onClick={handleLogout}
+          className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#f1d9d9] bg-white px-4 py-2 text-[#7D1315] shadow-[0_10px_20px_rgba(34,53,48,0.04)] transition hover:border-[#e7c1c1] hover:bg-[#fff7f7]"
+        >
+          <p className="font-poppins text-sm font-semibold tracking-wide">Logout</p>
+          <LogOut className="duration-500 group-hover:translate-x-0.5" size={18} />
         </div>
       </div>
     </nav>

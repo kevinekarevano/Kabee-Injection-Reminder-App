@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  confirmPillIntake,
   confirmInjection,
   createUser,
   deleteUser,
@@ -30,6 +31,7 @@ router.get("/chat-history", authMiddleware, adminMiddleware, getChatHistory);
 router.post("/create", authMiddleware, adminMiddleware, upload.single("avatar"), createUser);
 router.post("/send-message/:id", authMiddleware, adminMiddleware, sendMessage);
 router.patch("/confirmation/:id", authMiddleware, confirmInjection);
+router.patch("/pill-confirmation", authMiddleware, confirmPillIntake);
 router.patch("/update/:id", authMiddleware, adminMiddleware, upload.single("avatar"), updatedUser);
 router.delete("/delete/:id", authMiddleware, adminMiddleware, deleteUser);
 

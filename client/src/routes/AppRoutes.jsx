@@ -17,14 +17,24 @@ import PendingInjectionPage from "@/pages/Dashboard/InjectionPage";
 import DataReportPage from "@/pages/Dashboard/DataReportPage";
 import ChatListPage from "@/pages/Dashboard/ChatListPage";
 import ChatHistoryPage from "@/pages/Dashboard/ChatHistoryPage";
+import CreateArticlePage from "@/pages/Dashboard/CreateArticlePage";
+import ArticlesPage from "@/pages/Dashboard/ArticlesPage";
+import EditArticlePage from "@/pages/Dashboard/EditArticlePage";
+import ArticleDetailPage from "@/pages/ArticleDetailPage";
+import PublicArticlesPage from "@/pages/PublicArticlesPage";
+import LandingPage from "@/pages/LandingPage";
 
 const AppRoutes = () => {
   return (
     <>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/articles" element={<PublicArticlesPage />} />
+        <Route path="/articles/:slug" element={<ArticleDetailPage />} />
+
         {/* User Route */}
         <Route
-          path="/"
+          path="/user"
           element={
             <ProtectedRoute>
               <RoleBasedRoute allowedRoles={["user"]}>
@@ -58,6 +68,9 @@ const AppRoutes = () => {
           <Route path="users/data-entry" element={<DataEntryPage />} />
           <Route path="users/pending-injection" element={<PendingInjectionPage />} />
           <Route path="users/data-report" element={<DataReportPage />} />
+          <Route path="articles/create" element={<CreateArticlePage />} />
+          <Route path="articles" element={<ArticlesPage />} />
+          <Route path="articles/edit/:id" element={<EditArticlePage />} />
         </Route>
 
         {/* Auth */}

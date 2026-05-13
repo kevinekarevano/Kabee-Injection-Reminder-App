@@ -5,8 +5,11 @@ export default function CustomTrigger() {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <button className="cursor-pointer m-2 bg-teal-900 rounded-sm border-2 border-zinc-700  " onClick={toggleSidebar}>
-      <PanelRightClose size={30} className="text-zinc-200 p-1" />
+    <button
+      className="m-3 inline-flex cursor-pointer items-center justify-center rounded-full border border-[#dde4db] bg-white p-2 text-[#2f7c6d] shadow-[0_10px_25px_rgba(34,53,48,0.06)] transition hover:-translate-y-0.5 hover:bg-[#edf4ef]"
+      onClick={toggleSidebar}
+    >
+      <PanelRightClose size={24} className="p-0.5" />
     </button>
   );
 }

@@ -13,6 +13,7 @@ const UserHistoryPage = () => {
   const injectionHistory = useAppStore((state) => state.injectionHistory);
   const getInjectionHistory = useAppStore((state) => state.getInjectionHistory);
   const { id, username } = useParams();
+  const isPillUser = injectionHistory?.[0]?.user?.contraceptiveMethod === "pill";
 
   useEffect(() => {
     if (id) {
@@ -21,35 +22,40 @@ const UserHistoryPage = () => {
   }, [id, getInjectionHistory]);
 
   return (
-    <div className="w-full">
+    <div className="w-full text-[#24302b]">
       <BreadcrumbCustom pageName={"History"} />
-      <h1 className="text-white font-bold text-xl">History - {injectionHistory?.[0]?.user?.username || username}</h1>
-      <div className="bg-zinc-700 rounded-sm mt-3 p-3">
+      <div className="max-w-2xl">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#72827a]">User Management</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#24352f]">
+          {isPillUser ? "KB History" : "Injection History"} - {injectionHistory?.[0]?.user?.username || username}
+        </h1>
+      </div>
+      <div className="mt-6 rounded-[2rem] border border-[#dde4db] bg-white p-3 shadow-[0_16px_30px_rgba(34,53,48,0.04)]">
         <Table>
-          <TableCaption className={"text-zinc-200 italic "}>A list of your recent injection.</TableCaption>
+          <TableCaption className={"italic text-[#72827a]"}>{isPillUser ? "A list of your recent KB activity." : "A list of your recent injection."}</TableCaption>
           <TableHeader>
             <TableRow className={"text-xl text-left"}>
-              <TableHead className={"text-[#EFF6F7] font-semibold w-10"}>#</TableHead>
-              <TableHead className={"text-[#EFF6F7] font-semibold"}>Date</TableHead>
-              <TableHead className={"text-[#EFF6F7] font-semibold"}>Type</TableHead>
-              <TableHead className={"text-[#EFF6F7] font-semibold"}>Status</TableHead>
+              <TableHead className={"w-10 font-semibold text-[#24302b]"}>#</TableHead>
+              <TableHead className={"font-semibold text-[#24302b]"}>Date</TableHead>
+              <TableHead className={"font-semibold text-[#24302b]"}>{isPillUser ? "Method" : "Type"}</TableHead>
+              <TableHead className={"font-semibold text-[#24302b]"}>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {injectionHistory?.length === 0 ? (
               <TableRow className={"text-lg"}>
-                <TableCell colSpan={4} className={"text-[#EFF6F7] italic text-center "}>
-                  No injection history found.
+                <TableCell colSpan={4} className={"text-center italic text-[#5d6f69]"}>
+                  {isPillUser ? "No KB history found." : "No injection history found."}
                 </TableCell>
               </TableRow>
             ) : (
               injectionHistory?.map((item, index) => (
                 <TableRow key={index} className={"text-lg"}>
-                  <TableCell className={"text-[#EFF6F7] font-bold "}>{index + 1}.</TableCell>
-                  <TableCell className={"text-[#EFF6F7] "}>{dayjs(item.createdAt).format("D MMMM YYYY HH:mm")}</TableCell>
-                  <TableCell className={"text-[#EFF6F7] font-extralight italic"}>{formatInjectionType(item?.injectionType)}</TableCell>
+                  <TableCell className={"font-bold text-[#24302b]"}>{index + 1}.</TableCell>
+                  <TableCell className={"text-[#5d6f69]"}>{dayjs(item.createdAt).format("D MMMM YYYY HH:mm")}</TableCell>
+                  <TableCell className={"font-extralight italic text-[#5d6f69]"}>{isPillUser ? <Badge className={"rounded-full bg-[#edf4ef] font-bold text-[#2f7c6d]"}>Pil</Badge> : formatInjectionType(item?.injectionType)}</TableCell>
                   <TableCell>
-                    <Badge className={"bg-green-700"}>Completed</Badge>
+                    <Badge className={isPillUser ? "rounded-full bg-[#edf4ef] text-[#2f7c6d]" : "rounded-full bg-[#edf4ef] text-[#2f7c6d]"}>Completed</Badge>
                   </TableCell>
                 </TableRow>
               ))
@@ -58,7 +64,7 @@ const UserHistoryPage = () => {
         </Table>
 
         <Link className="block w-full" to={"/dashboard/users"}>
-          <Button className={"bg-emerald-300  text-emerald-900  hover:bg-emerald-400 hover:text-emerald-950 duration-500 font-bold cursor-pointer"}>Back</Button>
+          <Button className={"cursor-pointer rounded-full bg-[#2f7c6d] font-bold text-white duration-500 hover:bg-[#275f55]"}>Back</Button>
         </Link>
       </div>
     </div>

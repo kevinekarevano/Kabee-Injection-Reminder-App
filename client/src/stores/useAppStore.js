@@ -108,6 +108,22 @@ const useAppStore = create((set, get) => ({
     }
   },
 
+  pillConfirmation: async () => {
+    try {
+      const { data } = await axios.patch(`${import.meta.env.VITE_API_URL}/api/user/pill-confirmation`, {}, { withCredentials: true });
+      if (data.success) {
+        toast.success(data.message);
+        get().getUserData();
+        get().getInjectionHistory();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message || "Failed to confirm pill intake";
+      toast.error(message);
+    }
+  },
+
   getPendingInjectionUsers: async () => {
     const user = get().userData;
     if (!user || user.role !== "admin") {

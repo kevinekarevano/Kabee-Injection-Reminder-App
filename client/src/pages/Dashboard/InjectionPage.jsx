@@ -25,70 +25,73 @@ const PendingInjectionPage = () => {
   });
 
   return (
-    <div className="w-full ">
-      <h1 className="text-white font-bold text-xl">Injection</h1>
-
-      <div className="flex w-full md:w-1/3 items-center mb-2 sm:mb-0  mt-5   border-zinc-800 border-2  bg-zinc-700 px-2   rounded-md  ">
-        <Search className="text-zinc-500" />
-        <Input onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} placeholder="Search for user by username..." className={"border-none shadow-none text-zinc-200 placeholder:text-zinc-500"} />
+    <div className="w-full text-[#24302b]">
+      <div className="max-w-2xl">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#72827a]">User Management</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#24352f]">Confirm Injection</h1>
       </div>
 
-      <div className=" bg-zinc-700 rounded-sm  p-3   mt-2 w-full">
+      <div className="mt-6 flex w-full items-center rounded-full border border-[#dde4db] bg-white px-4 py-3 shadow-[0_12px_25px_rgba(34,53,48,0.04)] md:w-1/3">
+        <Search className="text-[#72827a]" />
+        <Input onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} placeholder="Search for user by username..." className={"border-none bg-transparent shadow-none text-[#24302b] placeholder:text-[#8b9a93]"} />
+      </div>
+
+      <div className="mt-2 w-full rounded-[2rem] border border-[#dde4db] bg-white p-3 shadow-[0_16px_30px_rgba(34,53,48,0.04)]">
         <Table>
-          <TableCaption>Table of users.</TableCaption>
+          <TableCaption className={"text-[#72827a]"}>Daftar user yang perlu konfirmasi suntik.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>#</TableHead>
-              <TableHead>Username</TableHead>
-              <TableHead>Injection Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Avatar</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead className="font-semibold text-[#24302b]">#</TableHead>
+              <TableHead className="font-semibold text-[#24302b]">Username</TableHead>
+              <TableHead className="font-semibold text-[#24302b]">Tanggal Suntik</TableHead>
+              <TableHead className="font-semibold text-[#24302b]">Status</TableHead>
+              <TableHead className="font-semibold text-[#24302b]">Avatar</TableHead>
+              <TableHead className="font-semibold text-[#24302b]">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredUsers?.length === 0 ? (
               <TableRow className={"text-lg"}>
-                <TableCell colSpan={7} className={"text-zinc-500 text-center italic text-lg pt-3  "}>
+                <TableCell colSpan={7} className={"pt-3 text-center text-lg italic text-[#5d6f69]"}>
                   No users found 🥲
                 </TableCell>
               </TableRow>
             ) : (
               filteredUsers?.map((item, index) => (
-                <TableRow key={index} className={"text-white text-center"}>
+                <TableRow key={index} className={"text-center text-[#24302b]"}>
                   <TableCell>{index + 1}</TableCell>
 
                   <TableCell>{item.username}</TableCell>
 
-                  <TableCell className={"text-pink-300"}>{formatDate(item.nextInjectionDate) || "-"}</TableCell>
+                  <TableCell className={"text-[#2f7c6d]"}>{formatDate(item.nextInjectionDate) || "-"}</TableCell>
 
-                  <TableCell>{item.isConfirmed === false ? <Badge className={"bg-red-900 text-red-300 rounded-sm font-bold"}>PENDING</Badge> : "-"}</TableCell>
+                  <TableCell>{item.isConfirmed === false ? <Badge className={"rounded-full bg-[#fff0ef] font-bold text-[#c34a39]"}>PENDING</Badge> : "-"}</TableCell>
 
                   <TableCell>
-                    <Avatar className="w-10 h-10 mx-auto cursor-pointer">
+                    <Avatar className="mx-auto h-10 w-10 cursor-pointer">
                       <AvatarImage className={" object-cover"} src={item.avatar.url} />
-                      <AvatarFallback className={"font-poppins font-bold text-xl text-white bg-zinc-800  border-2 border-zinc-500"}>AD</AvatarFallback>
+                      <AvatarFallback className={"border-2 border-[#dde4db] bg-[#2f7c6d] font-poppins text-xl font-bold text-white"}>AD</AvatarFallback>
                     </Avatar>
                   </TableCell>
 
                   <TableCell className={"flex gap-2 items-center justify-center"}>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button className={"bg-teal-700 border-teal-800 border-2 cursor-pointer hover:bg-teal-800 transition duration-500"}>Confrim Injection</Button>
+                        <Button className={"bg-teal-700 border-teal-800 border-2 cursor-pointer hover:bg-teal-800 transition duration-500"}>Konfirmasi Suntik</Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px] bg-[#232E30] border-none  ">
+                      <DialogContent className="sm:max-w-[425px] border border-[#dde4db] bg-white">
                         <DialogHeader>
-                          <DialogTitle className={"text-white text-xl"}>Injection Confirmation</DialogTitle>
-                          <DialogDescription className={"text-zinc-300"}>Please make sure all data is correct before confirming the injection. Click "Save changes" to submit.</DialogDescription>
+                          <DialogTitle className={"text-xl text-[#24302b]"}>Confirm Injection</DialogTitle>
+                          <DialogDescription className={"text-[#5d6f69]"}>Please make sure all data is correct before saving the injection confirmation.</DialogDescription>
                         </DialogHeader>
 
                         <div className="grid gap-4">
                           <div className="grid gap-3">
-                            <Label className={"text-white"} htmlFor="weight">
+                            <Label className={"text-[#24302b]"} htmlFor="weight">
                               Weight (kg)<span className="text-red-400">*</span>
                             </Label>
                             <Input
-                              className={"bg-zinc-700 border-zinc-800 border-2 text-zinc-200"}
+                              className={"border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"}
                               value={form.weight}
                               onChange={(e) => setForm({ ...form, weight: e.target.value })}
                               id="weight"
@@ -98,11 +101,11 @@ const PendingInjectionPage = () => {
                           </div>
 
                           <div className="grid gap-3">
-                            <Label className={"text-white"} htmlFor="height">
+                            <Label className={"text-[#24302b]"} htmlFor="height">
                               Heigth (cm)<span className="text-red-400">*</span>
                             </Label>
                             <Input
-                              className={"bg-zinc-700 border-zinc-800 border-2 text-zinc-200"}
+                              className={"border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"}
                               value={form.height}
                               onChange={(e) => setForm({ ...form, height: e.target.value })}
                               id="height"
@@ -112,11 +115,11 @@ const PendingInjectionPage = () => {
                           </div>
 
                           <div className="grid gap-3">
-                            <Label className={"text-white"} htmlFor="bloodpressure">
+                            <Label className={"text-[#24302b]"} htmlFor="bloodpressure">
                               Blood Pressure<span className="text-red-400">*</span>
                             </Label>
                             <Input
-                              className={"bg-zinc-700 border-zinc-800 border-2 text-zinc-200"}
+                              className={"border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"}
                               value={form.bloodPressure}
                               onChange={(e) => setForm({ ...form, bloodPressure: e.target.value })}
                               id="bloodpressure"
@@ -127,11 +130,11 @@ const PendingInjectionPage = () => {
                         </div>
                         <DialogFooter>
                           <DialogClose asChild>
-                            <Button className={"bg-red-500 cursor-pointer border-red-500 text-white hover:bg-red-500 hover:text-white"} variant="outline">
+                            <Button className={"cursor-pointer rounded-full border border-[#dde4db] bg-[#fbf8f1] text-[#c34a39] hover:bg-white"} variant="outline">
                               Cancel
                             </Button>
                           </DialogClose>
-                          <Button onClick={() => injectionConfirmation(item._id, form)} className={"bg-emerald-600 cursor-pointer border-emerald-600 text-white hover:bg-emerald-600 hover:text-white"}>
+                          <Button onClick={() => injectionConfirmation(item._id, form)} className={"cursor-pointer rounded-full bg-[#2f7c6d] text-white hover:bg-[#275f55]"}>
                             Confirm
                           </Button>
                         </DialogFooter>

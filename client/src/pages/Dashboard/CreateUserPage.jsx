@@ -23,6 +23,8 @@ const CreateUserPage = () => {
   const [address, setAddress] = useState("");
   const [religion, setReligion] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [contraceptiveMethod, setContraceptiveMethod] = useState("injection");
+  const [dailyPillTime, setDailyPillTime] = useState("");
   const [password, setPassword] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +59,8 @@ const CreateUserPage = () => {
     setAddress("");
     setReligion("");
     setPhoneNumber("");
+    setContraceptiveMethod("injection");
+    setDailyPillTime("");
     setPassword("");
     setAvatarFile(null);
     setAvatarPreview(null);
@@ -75,6 +79,12 @@ const CreateUserPage = () => {
       return;
     }
 
+    if (contraceptiveMethod === "pill" && !dailyPillTime) {
+      toast.warning("Please provide daily pill time for pill method");
+      setIsLoading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("username", username);
     formData.append("nik", nik);
@@ -87,6 +97,8 @@ const CreateUserPage = () => {
     formData.append("phoneNumber", phoneNumber);
     formData.append("password", password);
     formData.append("avatar", avatarFile);
+    formData.append("contraceptiveMethod", contraceptiveMethod);
+    if (contraceptiveMethod === "pill" && dailyPillTime) formData.append("dailyPillTime", dailyPillTime);
 
     try {
       const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/create`, formData, {
@@ -117,34 +129,37 @@ const CreateUserPage = () => {
   };
 
   return (
-    <div className="w-full">
-      <h1 className="text-white font-bold text-xl">Create User</h1>
-      <form onSubmit={handleSubmit} className="mt-3 bg-zinc-700 p-5 rounded-sm">
-        {/* Row 1: Username, NIK, Birth Date */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+    <div className="w-full text-[#24302b]">
+      <div className="max-w-2xl">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#72827a]">User Management</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#24352f]">Create User</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-6 rounded-[2rem] border border-[#dde4db] bg-white p-5 shadow-[0_16px_30px_rgba(34,53,48,0.04)]">
+        <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="username">
-              Username <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="username">
+              Username <span className="text-red-500">*</span>
             </Label>
-            <Input value={username} onChange={(e) => setUsername(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="text" id="username" placeholder="Enter username..." />
+            <Input value={username} onChange={(e) => setUsername(e.target.value)} required className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="text" id="username" placeholder="Enter username..." />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="nik">
-              NIK <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="nik">
+              NIK <span className="text-red-500">*</span>
             </Label>
-            <Input value={nik} onChange={(e) => setNik(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="text" id="nik" placeholder="Enter NIK..." />
+            <Input value={nik} onChange={(e) => setNik(e.target.value)} required className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="text" id="nik" placeholder="Enter NIK..." />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="birthDate">
-              Birth Date <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="birthDate">
+              Birth Date <span className="text-red-500">*</span>
             </Label>
             <Input
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
               required
-              className="bg-zinc-800 border-zinc-900 text-zinc-300 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:filter"
+              className="border-[#dde4db] bg-white text-[#24302b] [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:contrast-75"
               type="date"
               id="birthDate"
               max={new Date().toISOString().split("T")[0]}
@@ -152,31 +167,74 @@ const CreateUserPage = () => {
           </div>
         </div>
 
-        {/* Row 2: Weight, Height, Number of Children */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+        <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="weight">
-              Weight (kg) <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]">Method</Label>
+            <Select onValueChange={(e) => setContraceptiveMethod(e)} value={contraceptiveMethod}>
+              <SelectTrigger className="w-full border-[#dde4db] bg-white text-[#24302b]">
+                <SelectValue placeholder="Choose method" />
+              </SelectTrigger>
+              <SelectContent className="border-[#dde4db] bg-white text-[#24302b]">
+                <SelectItem value="injection">Suntik</SelectItem>
+                <SelectItem value="pill">Pil (harian)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className={contraceptiveMethod === "pill" ? "" : "hidden"}>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="dailyPillTime">
+              Waktu Harian Pil <span className="text-red-500">*</span>
             </Label>
-            <Input value={weight} onChange={(e) => setWeight(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="number" id="weight" placeholder="Enter weight..." min="1" step="0.1" />
+            <Input value={dailyPillTime} onChange={(e) => setDailyPillTime(e.target.value)} required={contraceptiveMethod === "pill"} className="border-[#dde4db] bg-white text-[#24302b]" type="time" id="dailyPillTime" />
+          </div>
+
+          <div />
+        </div>
+
+        <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="weight">
+              Weight (kg) <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              required
+              className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"
+              type="number"
+              id="weight"
+              placeholder="Enter weight..."
+              min="1"
+              step="0.1"
+            />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="height">
-              Height (cm) <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="height">
+              Height (cm) <span className="text-red-500">*</span>
             </Label>
-            <Input value={height} onChange={(e) => setHeight(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="number" id="height" placeholder="Enter height..." min="1" step="0.1" />
+            <Input
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              required
+              className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"
+              type="number"
+              id="height"
+              placeholder="Enter height..."
+              min="1"
+              step="0.1"
+            />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="numberOfChildren">
-              Number of Children <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="numberOfChildren">
+              Number of Children <span className="text-red-500">*</span>
             </Label>
             <Input
               value={numberOfChildren}
               onChange={(e) => setNumberOfChildren(e.target.value)}
               required
-              className="bg-zinc-800 border-zinc-900 text-zinc-300"
+              className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"
               type="number"
               id="numberOfChildren"
               placeholder="Enter number of children..."
@@ -186,24 +244,23 @@ const CreateUserPage = () => {
           </div>
         </div>
 
-        {/* Row 3: Address, Religion, Phone Number */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+        <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="address">
-              Address <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="address">
+              Address <span className="text-red-500">*</span>
             </Label>
-            <Input value={address} onChange={(e) => setAddress(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="text" id="address" placeholder="Enter address..." />
+            <Input value={address} onChange={(e) => setAddress(e.target.value)} required className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]" type="text" id="address" placeholder="Enter address..." />
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white">
-              Religion <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]">
+              Religion <span className="text-red-500">*</span>
             </Label>
             <Select onValueChange={(e) => setReligion(e)} value={religion}>
-              <SelectTrigger className="w-full bg-zinc-800 border-zinc-900 text-zinc-300">
+              <SelectTrigger className="w-full border-[#dde4db] bg-white text-[#24302b]">
                 <SelectValue placeholder="Choose religion" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-800 text-zinc-200 border-none">
+              <SelectContent className="border-[#dde4db] bg-white text-[#24302b]">
                 <SelectItem value="Islam">Islam</SelectItem>
                 <SelectItem value="Kristen">Kristen</SelectItem>
                 <SelectItem value="Katolik">Katolik</SelectItem>
@@ -215,51 +272,57 @@ const CreateUserPage = () => {
           </div>
 
           <div>
-            <Label className="font-medium mb-2 text-white" htmlFor="phoneNumber">
-              Phone Number <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="phoneNumber">
+              Phone Number <span className="text-red-500">*</span>
             </Label>
-            <Input value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required className="bg-zinc-800 border-zinc-900 text-zinc-300" type="tel" id="phoneNumber" placeholder="Enter phone number..." />
+            <Input
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+              className="border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"
+              type="tel"
+              id="phoneNumber"
+              placeholder="Enter phone number..."
+            />
           </div>
         </div>
 
-        {/* Row 4: Password */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+        <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div className="relative">
-            <Label className="font-medium mb-2 text-white" htmlFor="password">
-              Password <span className="text-red-800">*</span>
+            <Label className="mb-2 font-medium text-[#24302b]" htmlFor="password">
+              Password <span className="text-red-500">*</span>
             </Label>
             <Input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="bg-zinc-800 border-zinc-900 pr-10 text-zinc-300"
+              className="border-[#dde4db] bg-white pr-10 text-[#24302b] placeholder:text-[#8b9a93]"
               type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Enter password..."
             />
-            <Button type="button" onClick={togglePasswordVisibility} className="absolute border-none bg-transparent hover:border-none hover:bg-transparent cursor-pointer top-6 right-0 text-zinc-500 hover:text-zinc-300">
-              {!showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            <Button type="button" onClick={togglePasswordVisibility} className="absolute right-0 top-6 cursor-pointer border-none bg-transparent text-[#72827a] hover:border-none hover:bg-transparent hover:text-[#24302b]">
+              {!showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </Button>
           </div>
         </div>
 
-        {/* Avatar Section */}
-        <div className="sm:w-1/3 mt-5">
-          <Label className="font-medium text-white" htmlFor="avatar">
-            Avatar Image <span className="text-red-800">*</span>
+        <div className="mt-5 sm:w-1/3">
+          <Label className="font-medium text-[#24302b]" htmlFor="avatar">
+            Avatar Image <span className="text-red-500">*</span>
           </Label>
 
           <div className="flex items-center gap-2">
-            <Input onChange={handleAvatarChange} accept=".jpg,.jpeg,.png" required className="bg-zinc-800 file:text-white file:font-bold border-zinc-900 text-zinc-400" type="file" id="avatar" />
+            <Input onChange={handleAvatarChange} accept=".jpg,.jpeg,.png" required className="border-[#dde4db] bg-white text-[#5d6f69] file:font-bold file:text-white" type="file" id="avatar" />
 
-            <Avatar className="cursor-pointer w-15 h-15 border-zinc-800 shadow-md border-2">
+            <Avatar className="h-15 w-15 cursor-pointer border-2 border-[#dde4db] shadow-md">
               <AvatarImage className="object-cover" src={avatarPreview ? avatarPreview : "/no-image.png"} />
-              <AvatarFallback className="font-poppins font-bold text-xl text-white bg-[#0B2E33]">KB</AvatarFallback>
+              <AvatarFallback className="bg-[#2f7c6d] font-poppins text-xl font-bold text-white">KB</AvatarFallback>
             </Avatar>
           </div>
 
-          <div className="flex mt-10 gap-2">
-            <Button disabled={isLoading} type="submit" className={`${isLoading ? "bg-sky-900 hover:bg-sky-900" : "bg-sky-300 hover:bg-sky-400"} sm:w-1/2 mb-5 sm:mb-0 text-sky-900 hover:text-sky-950 duration-500 font-bold cursor-pointer`}>
+          <div className="mt-10 flex gap-2">
+            <Button disabled={isLoading} type="submit" className={`${isLoading ? "bg-[#2f7c6d] hover:bg-[#2f7c6d]" : "bg-[#2f7c6d] hover:bg-[#275f55]"} mb-5 w-1/2 cursor-pointer font-bold text-white duration-500 sm:mb-0`}>
               {isLoading ? (
                 <Loader />
               ) : (
@@ -270,7 +333,7 @@ const CreateUserPage = () => {
               )}
             </Button>
             <Link className="block w-full" to={isLoading ? "" : "/dashboard/users"}>
-              <Button disabled={isLoading} className="bg-red-300 text-red-900 hover:bg-red-400 hover:text-red-950 duration-500 font-bold cursor-pointer">
+              <Button disabled={isLoading} className="cursor-pointer bg-[#c34a39] font-bold text-white duration-500 hover:bg-[#ab3e30]">
                 Cancel
               </Button>
             </Link>

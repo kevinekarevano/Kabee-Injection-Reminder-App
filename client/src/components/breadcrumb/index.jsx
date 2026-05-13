@@ -5,7 +5,7 @@ import { Slash } from "lucide-react";
 const BreadcrumbCustom = ({ pageName }) => {
   return (
     <Breadcrumb className="mb-4">
-      <BreadcrumbList className={"text-zinc-200  "}>
+      <BreadcrumbList className={"text-[#72827a]"}>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
             <Link to={"/dashboard/users"}>Users</Link>
@@ -15,7 +15,7 @@ const BreadcrumbCustom = ({ pageName }) => {
           <Slash />
         </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbLink className="font-bold text-zinc-50">{pageName}</BreadcrumbLink>
+          <BreadcrumbLink className="font-bold text-[#24352f]">{pageName}</BreadcrumbLink>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

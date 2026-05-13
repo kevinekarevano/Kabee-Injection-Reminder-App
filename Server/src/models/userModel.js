@@ -91,6 +91,21 @@ const userSchema = mongoose.Schema(
       type: Date,
       default: null,
     },
+    // new: contraceptive method (injection or pill)
+    contraceptiveMethod: {
+      type: String,
+      enum: ["injection", "pill"],
+      default: "injection",
+    },
+    // pill specific fields
+    dailyPillTime: {
+      type: String,
+      default: null,
+    },
+    lastPillDate: {
+      type: Date,
+      default: null,
+    },
     injectionType: {
       type: String,
       enum: ["1_month", "3_month"],
@@ -107,7 +122,7 @@ const userSchema = mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const userModel = mongoose.model("User", userSchema);

@@ -48,3 +48,37 @@ export const sendInjectionReminder = async () => {
     console.error("Error sending reminders:", error);
   }
 };
+
+export const sendPillReminder = async () => {
+  console.log("🔔 Running daily pill reminder job...");
+
+  try {
+    const pillUsers = await userModel.find({
+      contraceptiveMethod: "pill",
+      telegramChatID: { $nin: [null, ""] },
+    });
+
+    if (!pillUsers || pillUsers.length === 0) {
+      console.log("No pill users to remind today.");
+      return;
+    }
+
+    for (const user of pillUsers) {
+      if (!user.telegramChatID) continue;
+
+      const message = `🔔 *Pengingat Pil KB Harian*\n\nHai *${user.username}*, jangan lupa minum pil KB kamu *hari ini*. Tetap konsisten ya! 💊\n\n-KabeeBot🤖`;
+
+      await bot.sendMessage(user.telegramChatID, message, { parse_mode: "Markdown" });
+      console.log(`✅ Pill reminder dikirim ke ${user.username}`);
+
+      // Log the reminder
+      await reminderLogModel.create({
+        userId: user._id,
+        method: "auto",
+        message,
+      });
+    }
+  } catch (err) {
+    console.error("Error sending pill reminders:", err);
+  }
+};

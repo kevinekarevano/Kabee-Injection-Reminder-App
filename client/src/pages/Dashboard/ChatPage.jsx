@@ -38,7 +38,7 @@ const ChatPage = () => {
         { message },
         {
           withCredentials: true,
-        }
+        },
       );
 
       if (data.success) {
@@ -61,20 +61,23 @@ const ChatPage = () => {
   }, [id]);
 
   return (
-    <div className="w-full">
-       <BreadcrumbCustom pageName={'Chat'} />
-      <h1 className="text-white font-bold text-xl">Chat with {username} </h1>
-      <div className="bg-zinc-700 rounded-sm mt-3 p-6">
+    <div className="w-full text-[#24302b]">
+      <BreadcrumbCustom pageName={"Chat"} />
+      <div className="max-w-2xl">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#72827a]">Chat Management</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#24352f]">Chat with {username}</h1>
+      </div>
+      <div className="mt-6 rounded-[2rem] border border-[#dde4db] bg-white p-6 shadow-[0_16px_30px_rgba(34,53,48,0.04)]">
         <form onSubmit={handleSubmit}>
           <div className="grid w-full gap-1.5">
-            <Label className={"font-medium  text-xl text-white "} htmlFor="message">
+            <Label className={"text-xl font-medium text-[#24302b]"} htmlFor="message">
               Your message <span className="text-red-800">*</span>
             </Label>
 
-            <Textarea required value={message} onChange={(e) => setMessage(e.target.value)} className={"bg-zinc-800 border-zinc-900 text-zinc-300"} placeholder="Type your message here..." id="message" />
+            <Textarea required value={message} onChange={(e) => setMessage(e.target.value)} className={"border-[#dde4db] bg-white text-[#24302b] placeholder:text-[#8b9a93]"} placeholder="Type your message here..." id="message" />
           </div>
           <div className="md:flex  gap-2 mt-5">
-            <Button disabled={isLoading} type="submit" className={"bg-emerald-300  w-full sm:w-1/4  text-emerald-900  hover:bg-emerald-400 hover:text-emerald-950 duration-500 font-bold cursor-pointer"}>
+            <Button disabled={isLoading} type="submit" className={"w-full cursor-pointer rounded-full bg-[#2f7c6d] font-bold text-white duration-500 hover:bg-[#275f55] sm:w-1/4"}>
               {isLoading ? <Loader /> : "Send"}
             </Button>
             <Button
@@ -89,13 +92,13 @@ Halo ${username},
 Salam hormat,  
 Tim Admin Kabee`)
               }
-              className="bg-sky-200 text-sky-900 border-sky-900 border-2 hover:bg-sky-300 hover:text-sky-950 w-full mt-2 sm:mt-0 sm:w-1/5 cursor-pointer font-semibold px-3 py-1  mb-2"
+              className="mt-2 w-full cursor-pointer rounded-full border border-[#dde4db] bg-[#edf4ef] px-3 py-1 font-semibold text-[#2f7c6d] hover:bg-[#e3eee7] sm:mt-0 sm:w-1/5"
             >
               Gunakan Template Resmi
             </Button>
 
             <Link className="" to={"/dashboard/chat"}>
-              <Button disabled={isLoading} className={"bg-red-300  text-red-900 w-full  hover:bg-red-400 hover:text-red-950 duration-500 font-bold cursor-pointer"}>
+              <Button disabled={isLoading} className={"w-full cursor-pointer rounded-full bg-[#c34a39] font-bold text-white duration-500 hover:bg-[#ab3e30]"}>
                 Cancel
               </Button>
             </Link>
